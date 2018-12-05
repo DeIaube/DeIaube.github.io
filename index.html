@@ -249,6 +249,191 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/对称加密以及AES加密/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/05/对称加密以及AES加密/" itemprop="url">对称加密以及AES加密</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-05T19:37:19+08:00">
+                2018-12-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h1><p>对称加密就是加密和解密使用同一个密钥的加密算法。</p>
+<h2 id="对称加密的工作方式"><a href="#对称加密的工作方式" class="headerlink" title="对称加密的工作方式"></a>对称加密的工作方式</h2><ul>
+<li>使用密钥加密明文数据</li>
+<li>发送密文</li>
+<li>收到密文</li>
+<li>使用同一套密钥解密密文</li>
+</ul>
+<h2 id="对称加密的优点"><a href="#对称加密的优点" class="headerlink" title="对称加密的优点"></a>对称加密的优点</h2><ul>
+<li>计算量小</li>
+<li>速度快</li>
+<li>适合大量数据加密</li>
+</ul>
+<h2 id="对称加密的缺点"><a href="#对称加密的缺点" class="headerlink" title="对称加密的缺点"></a>对称加密的缺点</h2><h3 id="密钥传输问题"><a href="#密钥传输问题" class="headerlink" title="密钥传输问题"></a>密钥传输问题</h3><p>由于对称加密使用同一个密钥,所以算法的安全性不仅仅取决于加密算法,更取决于密钥能否安全保管。</p>
+<p>实际开发通常是客户端向服务端请求对称加密的密钥,密钥通过非对称加密后再传输。</p>
+<h3 id="密钥管理问题"><a href="#密钥管理问题" class="headerlink" title="密钥管理问题"></a>密钥管理问题</h3><p>随着用户的增多,密钥的数量也随着膨胀。</p>
+<h1 id="AES加密"><a href="#AES加密" class="headerlink" title="AES加密"></a>AES加密</h1><p>AES(Advanced Encryption Standard)是用来替代之前的DES加密算法而出现的。</p>
+<p>AES加密算法使用分组密码体制,每个分组数据的长度为128位16个字节,密钥长度可以是128位16个字节、192位或者256位,一共有四种加密模式,我们通常采用需要初始向量IV的CBC模式,初始向量的长度为128位16个字节。</p>
+<h2 id="AES的加密原理"><a href="#AES的加密原理" class="headerlink" title="AES的加密原理"></a>AES的加密原理</h2><h3 id="分组密码体制"><a href="#分组密码体制" class="headerlink" title="分组密码体制"></a>分组密码体制</h3><p>AES采用分组密码体制,将明文分段,每段长度为128位16字节。如果长度不够16字节,则要通过Padding将数据填满16字节,然后分别的每段数据加密,最后拼接成为密文。</p>
+<h3 id="Padding"><a href="#Padding" class="headerlink" title="Padding"></a>Padding</h3><p>Padding用来填充不满16字节的分组数据,有三种不同的填充模式。</p>
+<ul>
+<li><strong>PKCS5</strong>: 缺少n的字节,就在末尾填充n字节的n</li>
+<li><strong>PKCS7</strong>: 末尾填充0</li>
+<li><strong>NOPADDING</strong>: 发送方保证不需要填充</li>
+</ul>
+<p>解密需要使用和加密端相同的Padding,通常采用PKCS7 Padding。</p>
+<h3 id="初始向量IV"><a href="#初始向量IV" class="headerlink" title="初始向量IV"></a>初始向量IV</h3><p>初始向量是为了使加密更加安全可靠,长度规定为128位16字节,初始向量来源为随机生成。</p>
+<h3 id="密钥"><a href="#密钥" class="headerlink" title="密钥"></a>密钥</h3><p>密钥的长度可以为128位16字节、192位或者256位,位数越高强度越大,但是效率更低。</p>
+<p>通常采用128位16字节的密钥,密钥来源为随机生成。</p>
+<h3 id="四种加密模式"><a href="#四种加密模式" class="headerlink" title="四种加密模式"></a>四种加密模式</h3><p>四种加密模式分别为ECB(电子密码本模式)、CBC(密码分组链接模式)、CFB以及OFB模式。</p>
+<h2 id="AES的加密流程"><a href="#AES的加密流程" class="headerlink" title="AES的加密流程"></a>AES的加密流程</h2><h3 id="ECB-电子密码本模式"><a href="#ECB-电子密码本模式" class="headerlink" title="ECB(电子密码本模式)"></a>ECB(电子密码本模式)</h3><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E4%BB%A5%E5%8F%8AAES%E5%8A%A0%E5%AF%86_1.png.png" alt="image"></p>
+<p>ECB是最基本的加密模式,相同的明文块会被加密成相同的密文块,更容易破解,不安全,因为很少使用。</p>
+<h3 id="CBC-密码分组链接模式"><a href="#CBC-密码分组链接模式" class="headerlink" title="CBC(密码分组链接模式)"></a>CBC(密码分组链接模式)</h3><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E4%BB%A5%E5%8F%8AAES%E5%8A%A0%E5%AF%86_2.png" alt="image"></p>
+<ul>
+<li>AES将明文按128位16字节分割,如果最后一块不够则通过Padding填充</li>
+<li>然后将明文块0与初始向量IV进行异或操作,再用密钥加密,得到密文块0,同时密文块0作为明文块1的加密向量</li>
+<li>然后明文块1与密文块0进行异或,再用密钥加密得到密文块1</li>
+<li>最后将所有密文块拼接得到密文</li>
+</ul>
+<h2 id="AES的注意事项"><a href="#AES的注意事项" class="headerlink" title="AES的注意事项"></a>AES的注意事项</h2><ul>
+<li>服务端与客户端使用相同的<strong>密钥</strong></li>
+<li>服务端与客户端使用相同的<strong>初始向量IV</strong></li>
+<li>服务端与客户端使用相同的<strong>加密模式</strong> </li>
+<li>服务端与客户端使用相同的<strong>Padding</strong></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/Hash算法以及MD5/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1098,7 +1283,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
