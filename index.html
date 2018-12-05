@@ -249,6 +249,182 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/Hash算法以及MD5/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/05/Hash算法以及MD5/" itemprop="url">Hash算法以及MD5</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-05T18:32:37+08:00">
+                2018-12-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>MD5(Message Digest Algorithm MD5)是一种Hash算法,严格来说并不是一种加密算法,但是可以达到加密的效果。</p>
+<h1 id="MD5算法的优点"><a href="#MD5算法的优点" class="headerlink" title="MD5算法的优点"></a>MD5算法的优点</h1><h2 id="容易计算以及不可逆"><a href="#容易计算以及不可逆" class="headerlink" title="容易计算以及不可逆"></a>容易计算以及不可逆</h2><ul>
+<li>主流编程语言基本都支持MD5算法的实现</li>
+<li>MD5是一个不可逆的算法,无法通过MD5值逆推原文</li>
+</ul>
+<h2 id="压缩性"><a href="#压缩性" class="headerlink" title="压缩性"></a>压缩性</h2><ul>
+<li>任意长度的数据的MD5值都是一个32位长度的十六进制字符串,区分大小写</li>
+</ul>
+<h2 id="抗修改性"><a href="#抗修改性" class="headerlink" title="抗修改性"></a>抗修改性</h2><ul>
+<li>原文即便是微小的修改,MD5也会有巨大的变动</li>
+</ul>
+<h2 id="抗碰撞性"><a href="#抗碰撞性" class="headerlink" title="抗碰撞性"></a>抗碰撞性</h2><ul>
+<li>MD5共有2的128次方种可能性,实际中找到两个相同的MD5值是非常困难的</li>
+</ul>
+<h1 id="MD5算法的缺点"><a href="#MD5算法的缺点" class="headerlink" title="MD5算法的缺点"></a>MD5算法的缺点</h1><ul>
+<li>安全性</li>
+</ul>
+<h1 id="MD5算法的场景"><a href="#MD5算法的场景" class="headerlink" title="MD5算法的场景"></a>MD5算法的场景</h1><h2 id="用户信息存储"><a href="#用户信息存储" class="headerlink" title="用户信息存储"></a>用户信息存储</h2><h3 id="数据加密"><a href="#数据加密" class="headerlink" title="数据加密"></a>数据加密</h3><p>为了预防数据库泄露带来的严重后果,数据库中不应存放用户私密数据的明文。</p>
+<h3 id="MD5的弊端-彩虹表"><a href="#MD5的弊端-彩虹表" class="headerlink" title="MD5的弊端(彩虹表)"></a>MD5的弊端(彩虹表)</h3><p>彩虹表是一个庞大的数据库,存放着常用的密码以及对应的MD5、SHA-X等Hash值，如果密码较为简单就有可能被彩虹表破译掉。</p>
+<h3 id="正确的加密方法-salt"><a href="#正确的加密方法-salt" class="headerlink" title="正确的加密方法(salt)"></a>正确的加密方法(salt)</h3><p>加盐:在密码的任意位置插入一些特殊的字符串(salt)的过程。</p>
+<p>加盐是为了增强密码的复杂性,从而降低了密码被彩虹表破译的概率。</p>
+<p>加盐的要求:</p>
+<ul>
+<li>每个用户的salt最好具有唯一性</li>
+<li>salt最好由服务器为每个用户随机生成</li>
+<li>撒盐的方法最好复杂一点</li>
+</ul>
+<h3 id="实际开发流程"><a href="#实际开发流程" class="headerlink" title="实际开发流程"></a>实际开发流程</h3><p>服务端进行加盐操作:</p>
+<ul>
+<li>客户端对password进行MD5</li>
+<li>通过接口传递加密后的数据</li>
+<li>服务端MD5(客户端传递的加密数据 + salt)</li>
+<li>服务端保存数据</li>
+</ul>
+<h2 id="生成数字签名"><a href="#生成数字签名" class="headerlink" title="生成数字签名"></a>生成数字签名</h2><p>微信支付通过MD5生成数字签名</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/常见加密算法概述/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -922,7 +1098,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -944,7 +1120,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
