@@ -291,6 +291,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -301,37 +323,6 @@
 
           
 
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
           
 
           
@@ -351,8 +342,8 @@
       
         
           
-            <h1 id="Http连接过程"><a href="#Http连接过程" class="headerlink" title="Http连接过程"></a>Http连接过程</h1><h3 id="HTTPS连接过程如下图所示"><a href="#HTTPS连接过程如下图所示" class="headerlink" title="HTTPS连接过程如下图所示"></a>HTTPS连接过程如下图所示</h3><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_https_1.png" alt="image"></p>
-<h3 id="HTTPS的详细连接过程如下"><a href="#HTTPS的详细连接过程如下" class="headerlink" title="HTTPS的详细连接过程如下"></a>HTTPS的详细连接过程如下</h3><p><strong>1.客户端向服务端发送https请求</strong></p>
+            <h1 id="Http连接过程"><a href="#Http连接过程" class="headerlink" title="Http连接过程"></a>Http连接过程</h1><h2 id="HTTPS连接过程"><a href="#HTTPS连接过程" class="headerlink" title="HTTPS连接过程"></a>HTTPS连接过程</h2><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_https_1.png" alt="image"></p>
+<h2 id="HTTPS的详细连接流程"><a href="#HTTPS的详细连接流程" class="headerlink" title="HTTPS的详细连接流程"></a>HTTPS的详细连接流程</h2><p><strong>1.客户端向服务端发送https请求</strong></p>
 <p><strong>2.服务器端生成公钥与私钥</strong></p>
 <p><strong>3.服务器端向客户端返回公钥</strong></p>
 <p>公钥包含证书的颁发机构、过期时间等</p>
@@ -364,8 +355,8 @@
 <p><strong>7.服务端向客户端传输密文</strong></p>
 <p><strong>8.客户端解密密文</strong></p>
 <p>客户端通过之前生成的密钥解密密文,得到内容</p>
-<h1 id="中间人劫持攻击"><a href="#中间人劫持攻击" class="headerlink" title="中间人劫持攻击"></a>中间人劫持攻击</h1><h3 id="中间人劫持攻击过程如下图所示"><a href="#中间人劫持攻击过程如下图所示" class="headerlink" title="中间人劫持攻击过程如下图所示"></a>中间人劫持攻击过程如下图所示</h3><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_https_2.png" alt="image"></p>
-<h3 id="中间人攻击的预防"><a href="#中间人攻击的预防" class="headerlink" title="中间人攻击的预防"></a>中间人攻击的预防</h3><p>中间人劫持攻击的前提是客户端信任中间人的证书,而造成这种情况一般是服务端没有对服务端证书及域名作校验或者校验不完整。</p>
+<h1 id="中间人劫持攻击"><a href="#中间人劫持攻击" class="headerlink" title="中间人劫持攻击"></a>中间人劫持攻击</h1><h2 id="中间人劫持攻击过程"><a href="#中间人劫持攻击过程" class="headerlink" title="中间人劫持攻击过程"></a>中间人劫持攻击过程</h2><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_https_2.png" alt="image"></p>
+<h2 id="中间人攻击的预防"><a href="#中间人攻击的预防" class="headerlink" title="中间人攻击的预防"></a>中间人攻击的预防</h2><p>中间人劫持攻击的前提是客户端信任中间人的证书,而造成这种情况一般是服务端没有对服务端证书及域名作校验或者校验不完整。</p>
 <ol>
 <li>客户端预埋证书的方式锁死证书,只有当客户端证书和服务端证书完全一致才允许通信(证书过期需要强制更新或者要求下载证书)</li>
 <li>客户端校验域名、证书有效期、证书关键信息以及证书链</li>
@@ -492,37 +483,6 @@
 
           
 
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  
-                </span>
-              
-            </div>
           
 
           
@@ -892,15 +852,6 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Dawn</span>
 
-  
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item-icon">
-      <i class="fa fa-area-chart"></i>
-    </span>
-    
-      <span class="post-meta-item-text">Site words total count&#58;</span>
-    
-    <span title="Site words total count"></span>
   
 </div>
 
