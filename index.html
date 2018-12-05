@@ -249,6 +249,171 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/06/非对称加密以及RSA加密/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/06/非对称加密以及RSA加密/" itemprop="url">非对称加密以及RSA加密</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-06T01:36:37+08:00">
+                2018-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="非对称加密"><a href="#非对称加密" class="headerlink" title="非对称加密"></a>非对称加密</h1><p>非对称加密需要一对密钥,即公钥和私钥。如果使用公钥加密,则只能用对应私钥才能解密;而如果使用私钥加密,则只能使用对应公钥才能解密。</p>
+<p>非对称加密主要是为了解决对称加密的<strong>密钥传输</strong>与<strong>密钥管理</strong>问题。</p>
+<h2 id="非对称加密的工作方式"><a href="#非对称加密的工作方式" class="headerlink" title="非对称加密的工作方式"></a>非对称加密的工作方式</h2><p>客户端向服务端发送数据流程:</p>
+<ul>
+<li>服务端生成公钥和私钥</li>
+<li>服务端发送公钥给客户端</li>
+<li>客户端通过公钥加密数据</li>
+<li>客户端发送密文给服务端</li>
+<li>服务端通过私钥解密密文</li>
+</ul>
+<p>公钥和私钥都可以用来加密数据。</p>
+<h2 id="非对称加密的优点"><a href="#非对称加密的优点" class="headerlink" title="非对称加密的优点"></a>非对称加密的优点</h2><ul>
+<li>解决密钥传输问题</li>
+<li>解决密钥管理问题</li>
+</ul>
+<h2 id="非对称加密的缺点"><a href="#非对称加密的缺点" class="headerlink" title="非对称加密的缺点"></a>非对称加密的缺点</h2><ul>
+<li>运算量大</li>
+<li>速度慢</li>
+<li>适合少量数据加密长</li>
+</ul>
+<h1 id="RSA算法"><a href="#RSA算法" class="headerlink" title="RSA算法"></a>RSA算法</h1><p>RSA是非对称加密算法的一种,为了保证加密的安全性,RSA密钥的长度一般都是1024位或者2048位,使得RSA加密的计算量大、速度慢。</p>
+<h2 id="RSA加密原理"><a href="#RSA加密原理" class="headerlink" title="RSA加密原理"></a>RSA加密原理</h2><p><a href="http://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html" target="_blank" rel="noopener">RSA加密原理(一)</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html" target="_blank" rel="noopener">RSA加密原理(二)</a></p>
+<h2 id="RSA注意事项"><a href="#RSA注意事项" class="headerlink" title="RSA注意事项"></a>RSA注意事项</h2><p>实际开发中,一般采用RSA+ASE相结合的方式。即使用AES加密数据,使用RSA加密AES的密钥。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/对称加密以及AES加密/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1283,7 +1448,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
