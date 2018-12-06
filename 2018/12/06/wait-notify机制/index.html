@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="计算机网络,密码学,">
+  <meta name="keywords" content="Java,jvm,并发,">
 
 
 
@@ -79,18 +79,20 @@
 
 
 
-<meta name="description" content="MD5(Message Digest Algorithm MD5)是一种Hash算法,严格来说并不是一种加密算法,但是可以达到加密的效果。 MD5算法的优点容易计算以及不可逆 主流编程语言基本都支持MD5算法的实现 MD5是一个不可逆的算法,无法通过MD5值逆推原文  压缩性 任意长度的数据的MD5值都是一个32位长度的十六进制字符串,区分大小写  抗修改性 原文即便是微小的修改,MD5也会有巨大">
-<meta name="keywords" content="计算机网络,密码学">
+<meta name="description" content="wait/notify机制介绍当一个线程A调用了对象o的wait()方法而进入了等待状态,而另一个线程B调用了对象o的notify()/notifyAll()方法,线程A收到通知退出等待队列,进入可执行状态。 wait/notify机制的用处当两个线程存在生产者消费者关系,如果用轮询实现会造成资源的浪费,而wait/notify可以解决这个问题。 相关方法 notify(): 随机唤醒等待队列中等">
+<meta name="keywords" content="Java,jvm,并发">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hash算法以及MD5">
-<meta property="og:url" content="http://yoursite.com/2018/12/05/Hash算法以及MD5/index.html">
+<meta property="og:title" content="wait&#x2F;notify机制">
+<meta property="og:url" content="http://yoursite.com/2018/12/06/wait-notify机制/index.html">
 <meta property="og:site_name" content="Dawn">
-<meta property="og:description" content="MD5(Message Digest Algorithm MD5)是一种Hash算法,严格来说并不是一种加密算法,但是可以达到加密的效果。 MD5算法的优点容易计算以及不可逆 主流编程语言基本都支持MD5算法的实现 MD5是一个不可逆的算法,无法通过MD5值逆推原文  压缩性 任意长度的数据的MD5值都是一个32位长度的十六进制字符串,区分大小写  抗修改性 原文即便是微小的修改,MD5也会有巨大">
+<meta property="og:description" content="wait/notify机制介绍当一个线程A调用了对象o的wait()方法而进入了等待状态,而另一个线程B调用了对象o的notify()/notifyAll()方法,线程A收到通知退出等待队列,进入可执行状态。 wait/notify机制的用处当两个线程存在生产者消费者关系,如果用轮询实现会造成资源的浪费,而wait/notify可以解决这个问题。 相关方法 notify(): 随机唤醒等待队列中等">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-05T10:35:42.162Z">
+<meta property="og:image" content="http://pj8vo9ptw.bkt.clouddn.com/img_wait%E3%80%81notify%E6%9C%BA%E5%88%B6_1.png">
+<meta property="og:updated_time" content="2018-12-06T09:28:55.369Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hash算法以及MD5">
-<meta name="twitter:description" content="MD5(Message Digest Algorithm MD5)是一种Hash算法,严格来说并不是一种加密算法,但是可以达到加密的效果。 MD5算法的优点容易计算以及不可逆 主流编程语言基本都支持MD5算法的实现 MD5是一个不可逆的算法,无法通过MD5值逆推原文  压缩性 任意长度的数据的MD5值都是一个32位长度的十六进制字符串,区分大小写  抗修改性 原文即便是微小的修改,MD5也会有巨大">
+<meta name="twitter:title" content="wait&#x2F;notify机制">
+<meta name="twitter:description" content="wait/notify机制介绍当一个线程A调用了对象o的wait()方法而进入了等待状态,而另一个线程B调用了对象o的notify()/notifyAll()方法,线程A收到通知退出等待队列,进入可执行状态。 wait/notify机制的用处当两个线程存在生产者消费者关系,如果用轮询实现会造成资源的浪费,而wait/notify可以解决这个问题。 相关方法 notify(): 随机唤醒等待队列中等">
+<meta name="twitter:image" content="http://pj8vo9ptw.bkt.clouddn.com/img_wait%E3%80%81notify%E6%9C%BA%E5%88%B6_1.png">
 
 
 
@@ -120,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/12/05/Hash算法以及MD5/">
+  <link rel="canonical" href="http://yoursite.com/2018/12/06/wait-notify机制/">
 
 
 
 
 
-  <title>Hash算法以及MD5 | Dawn</title>
+  <title>wait/notify机制 | Dawn</title>
   
 
 
@@ -253,7 +255,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/Hash算法以及MD5/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/06/wait-notify机制/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -270,7 +272,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Hash算法以及MD5</h1>
+          <h1 class="post-title" itemprop="name headline">wait/notify机制</h1>
         
 
         <div class="post-meta">
@@ -282,8 +284,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-05T18:32:37+08:00">
-                2018-12-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-06T17:26:02+08:00">
+                2018-12-06
               </time>
             
 
@@ -342,41 +344,38 @@
       
 
       
-        <p>MD5(Message Digest Algorithm MD5)是一种Hash算法,严格来说并不是一种加密算法,但是可以达到加密的效果。</p>
-<h1 id="MD5算法的优点"><a href="#MD5算法的优点" class="headerlink" title="MD5算法的优点"></a>MD5算法的优点</h1><h2 id="容易计算以及不可逆"><a href="#容易计算以及不可逆" class="headerlink" title="容易计算以及不可逆"></a>容易计算以及不可逆</h2><ul>
-<li>主流编程语言基本都支持MD5算法的实现</li>
-<li>MD5是一个不可逆的算法,无法通过MD5值逆推原文</li>
+        <h1 id="wait-notify机制介绍"><a href="#wait-notify机制介绍" class="headerlink" title="wait/notify机制介绍"></a>wait/notify机制介绍</h1><p>当一个线程A调用了对象o的wait()方法而进入了等待状态,而另一个线程B调用了对象o的notify()/notifyAll()方法,线程A收到通知退出等待队列,进入可执行状态。</p>
+<h2 id="wait-notify机制的用处"><a href="#wait-notify机制的用处" class="headerlink" title="wait/notify机制的用处"></a>wait/notify机制的用处</h2><p>当两个线程存在生产者消费者关系,如果用轮询实现会造成资源的浪费,而wait/notify可以解决这个问题。</p>
+<h2 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h2><ul>
+<li><strong>notify():</strong> 随机唤醒等待队列中等待统一资源的一个线程,此线程会进入可运行状态</li>
+<li><strong>notifyAll():</strong> 使所有等待队列中等待同一共享资源的线程退出等待队列,进入可运行状态</li>
+<li><strong>wait():</strong> 调用该方法的线程释放锁并且从运行状态退出,进入等待队列,直到被唤醒</li>
+<li><strong>wait(long):</strong> 超时等待一段时间,单位是毫秒,若超时没有被唤醒则返回</li>
+<li><strong>wait(long, int):</strong> 单位是纳秒</li>
 </ul>
-<h2 id="压缩性"><a href="#压缩性" class="headerlink" title="压缩性"></a>压缩性</h2><ul>
-<li>任意长度的数据的MD5值都是一个32位长度的十六进制字符串,区分大小写</li>
-</ul>
-<h2 id="抗修改性"><a href="#抗修改性" class="headerlink" title="抗修改性"></a>抗修改性</h2><ul>
-<li>原文即便是微小的修改,MD5也会有巨大的变动</li>
-</ul>
-<h2 id="抗碰撞性"><a href="#抗碰撞性" class="headerlink" title="抗碰撞性"></a>抗碰撞性</h2><ul>
-<li>MD5共有2的128次方种可能性,实际中找到两个相同的MD5值是非常困难的</li>
-</ul>
-<h1 id="MD5算法的缺点"><a href="#MD5算法的缺点" class="headerlink" title="MD5算法的缺点"></a>MD5算法的缺点</h1><ul>
-<li>安全性</li>
-</ul>
-<h1 id="MD5算法的场景"><a href="#MD5算法的场景" class="headerlink" title="MD5算法的场景"></a>MD5算法的场景</h1><h2 id="用户信息存储"><a href="#用户信息存储" class="headerlink" title="用户信息存储"></a>用户信息存储</h2><h3 id="数据加密"><a href="#数据加密" class="headerlink" title="数据加密"></a>数据加密</h3><p>为了预防数据库泄露带来的严重后果,数据库中不应存放用户私密数据的明文。</p>
-<h3 id="MD5的弊端-彩虹表"><a href="#MD5的弊端-彩虹表" class="headerlink" title="MD5的弊端(彩虹表)"></a>MD5的弊端(彩虹表)</h3><p>彩虹表是一个庞大的数据库,存放着常用的密码以及对应的MD5、SHA-X等Hash值，如果密码较为简单就有可能被彩虹表破译掉。</p>
-<h3 id="正确的加密方法-salt"><a href="#正确的加密方法-salt" class="headerlink" title="正确的加密方法(salt)"></a>正确的加密方法(salt)</h3><p>加盐:在密码的任意位置插入一些特殊的字符串(salt)的过程。</p>
-<p>加盐是为了增强密码的复杂性,从而降低了密码被彩虹表破译的概率。</p>
-<p>加盐的要求:</p>
+<h1 id="wait-notify机制原理"><a href="#wait-notify机制原理" class="headerlink" title="wait/notify机制原理"></a>wait/notify机制原理</h1><h2 id="线程的基本状态"><a href="#线程的基本状态" class="headerlink" title="线程的基本状态"></a>线程的基本状态</h2><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_wait%E3%80%81notify%E6%9C%BA%E5%88%B6_1.png" alt="image"></p>
 <ul>
-<li>每个用户的salt最好具有唯一性</li>
-<li>salt最好由服务器为每个用户随机生成</li>
-<li>撒盐的方法最好复杂一点</li>
-</ul>
-<h3 id="实际开发流程"><a href="#实际开发流程" class="headerlink" title="实际开发流程"></a>实际开发流程</h3><p>服务端进行加盐操作:</p>
+<li><strong>新建:</strong> 新创建的线程对象</li>
+<li><strong>可运行:</strong> 线程创建后,其start()方法被调用,位于可运行线程池中,等待获取cpu使用权</li>
+<li><strong>运行:</strong> 可运行状态的线程获取了cpu时间片,执行代码</li>
+<li><p><strong>阻塞:</strong> 线程因为某种原因放弃了cpu使用权,直到线程进入可运行状态</p>
 <ul>
-<li>客户端对password进行MD5</li>
-<li>通过接口传递加密后的数据</li>
-<li>服务端MD5(客户端传递的加密数据 + salt)</li>
-<li>服务端保存数据</li>
+<li><strong>等待阻塞:</strong> 执行了waitt()方法, JVM将该线程放入等待队列中</li>
+<li><strong>同步阻塞:</strong> 获取对象锁失败, JVM将该线程放入锁池(lock pool)中</li>
+<li><strong>其他阻塞:</strong> 执行了sleep()方法,或者发出了I/O请求, JVM将该线程置为阻塞状态,当sleep()状态超时或者I/O处理完毕线程重新转入可运行状态</li>
 </ul>
-<h2 id="生成数字签名"><a href="#生成数字签名" class="headerlink" title="生成数字签名"></a>生成数字签名</h2><p>微信支付通过MD5生成数字签名</p>
+</li>
+<li><p><strong>死亡:</strong> 线程的方法执行结束或者发生异常</p>
+</li>
+</ul>
+<h2 id="wait-notify流程"><a href="#wait-notify流程" class="headerlink" title="wait/notify流程"></a>wait/notify流程</h2><ul>
+<li>线程A获取对象锁并且进入同步代码块执行锁对象的wait()方法(立即释放锁),通知锁监听器,释放锁并且进入等待队列</li>
+<li>线程B获取对象锁并且进入同步代码块执行锁对象的notify/notifyAll方法,告诉锁监听器,通知该对象锁的等待队列 <strong>(执行notify/notifyAll方法并不立即释放锁,只有退出同步代码块才释放对象锁)</strong></li>
+<li>线程A得到锁监听器的通知,移出等待队列变成可运行状态,并且尝试获取锁执行代码</li>
+</ul>
+<h2 id="wait-notify与synchronized"><a href="#wait-notify与synchronized" class="headerlink" title="wait/notify与synchronized"></a>wait/notify与synchronized</h2><p>执行wait/notify必须要加synchronized锁,因为synchronized代码块生成的字节码中包含<strong>monitorenter</strong>与<strong>monitorexit</strong>指令。</p>
+<p>monitorenter指令可以获取对象的monitor,而wait()方法的底层实现依赖于该对象的monitor,即如果在synchronized代码中执行,必定获取到了对象的monitor。</p>
+<h2 id="wait-notify与cpu资源"><a href="#wait-notify与cpu资源" class="headerlink" title="wait/notify与cpu资源"></a>wait/notify与cpu资源</h2><p>wait/nofity是通过JVM里的<strong>park/unpark</strong>机制来实现的,在Linux下这种机制又是通过<br><strong>pthread_cond_wait/pthread_cond_signal</strong> 来实现的，因此当线程进入到wait状态的时候其实是会放弃cpu的，也就是说这类线程是不会占用cpu资源。</p>
 
       
     </div>
@@ -394,9 +393,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/计算机网络/" rel="tag"># 计算机网络</a>
+            <a href="/tags/Java/" rel="tag"># Java</a>
           
-            <a href="/tags/密码学/" rel="tag"># 密码学</a>
+            <a href="/tags/jvm/" rel="tag"># jvm</a>
+          
+            <a href="/tags/并发/" rel="tag"># 并发</a>
           
         </div>
       
@@ -409,8 +410,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/05/常见加密算法概述/" rel="next" title="常见加密算法概述">
-                <i class="fa fa-chevron-left"></i> 常见加密算法概述
+              <a href="/2018/12/06/非对称加密以及RSA加密/" rel="next" title="非对称加密以及RSA加密">
+                <i class="fa fa-chevron-left"></i> 非对称加密以及RSA加密
               </a>
             
           </div>
@@ -418,10 +419,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/12/05/对称加密以及AES加密/" rel="prev" title="对称加密以及AES加密">
-                对称加密以及AES加密 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -574,7 +571,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MD5算法的优点"><span class="nav-number">1.</span> <span class="nav-text">MD5算法的优点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#容易计算以及不可逆"><span class="nav-number">1.1.</span> <span class="nav-text">容易计算以及不可逆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#压缩性"><span class="nav-number">1.2.</span> <span class="nav-text">压缩性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抗修改性"><span class="nav-number">1.3.</span> <span class="nav-text">抗修改性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抗碰撞性"><span class="nav-number">1.4.</span> <span class="nav-text">抗碰撞性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MD5算法的缺点"><span class="nav-number">2.</span> <span class="nav-text">MD5算法的缺点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MD5算法的场景"><span class="nav-number">3.</span> <span class="nav-text">MD5算法的场景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用户信息存储"><span class="nav-number">3.1.</span> <span class="nav-text">用户信息存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据加密"><span class="nav-number">3.1.1.</span> <span class="nav-text">数据加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MD5的弊端-彩虹表"><span class="nav-number">3.1.2.</span> <span class="nav-text">MD5的弊端(彩虹表)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正确的加密方法-salt"><span class="nav-number">3.1.3.</span> <span class="nav-text">正确的加密方法(salt)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实际开发流程"><span class="nav-number">3.1.4.</span> <span class="nav-text">实际开发流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生成数字签名"><span class="nav-number">3.2.</span> <span class="nav-text">生成数字签名</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#wait-notify机制介绍"><span class="nav-number">1.</span> <span class="nav-text">wait/notify机制介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#wait-notify机制的用处"><span class="nav-number">1.1.</span> <span class="nav-text">wait/notify机制的用处</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关方法"><span class="nav-number">1.2.</span> <span class="nav-text">相关方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#wait-notify机制原理"><span class="nav-number">2.</span> <span class="nav-text">wait/notify机制原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的基本状态"><span class="nav-number">2.1.</span> <span class="nav-text">线程的基本状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wait-notify流程"><span class="nav-number">2.2.</span> <span class="nav-text">wait/notify流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wait-notify与synchronized"><span class="nav-number">2.3.</span> <span class="nav-text">wait/notify与synchronized</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wait-notify与cpu资源"><span class="nav-number">2.4.</span> <span class="nav-text">wait/notify与cpu资源</span></a></li></ol></li></ol></div>
             
 
           </div>

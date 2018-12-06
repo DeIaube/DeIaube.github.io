@@ -249,6 +249,179 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/06/wait-notify机制/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/06/wait-notify机制/" itemprop="url">wait/notify机制</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-06T17:26:02+08:00">
+                2018-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="wait-notify机制介绍"><a href="#wait-notify机制介绍" class="headerlink" title="wait/notify机制介绍"></a>wait/notify机制介绍</h1><p>当一个线程A调用了对象o的wait()方法而进入了等待状态,而另一个线程B调用了对象o的notify()/notifyAll()方法,线程A收到通知退出等待队列,进入可执行状态。</p>
+<h2 id="wait-notify机制的用处"><a href="#wait-notify机制的用处" class="headerlink" title="wait/notify机制的用处"></a>wait/notify机制的用处</h2><p>当两个线程存在生产者消费者关系,如果用轮询实现会造成资源的浪费,而wait/notify可以解决这个问题。</p>
+<h2 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h2><ul>
+<li><strong>notify():</strong> 随机唤醒等待队列中等待统一资源的一个线程,此线程会进入可运行状态</li>
+<li><strong>notifyAll():</strong> 使所有等待队列中等待同一共享资源的线程退出等待队列,进入可运行状态</li>
+<li><strong>wait():</strong> 调用该方法的线程释放锁并且从运行状态退出,进入等待队列,直到被唤醒</li>
+<li><strong>wait(long):</strong> 超时等待一段时间,单位是毫秒,若超时没有被唤醒则返回</li>
+<li><strong>wait(long, int):</strong> 单位是纳秒</li>
+</ul>
+<h1 id="wait-notify机制原理"><a href="#wait-notify机制原理" class="headerlink" title="wait/notify机制原理"></a>wait/notify机制原理</h1><h2 id="线程的基本状态"><a href="#线程的基本状态" class="headerlink" title="线程的基本状态"></a>线程的基本状态</h2><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_wait%E3%80%81notify%E6%9C%BA%E5%88%B6_1.png" alt="image"></p>
+<ul>
+<li><strong>新建:</strong> 新创建的线程对象</li>
+<li><strong>可运行:</strong> 线程创建后,其start()方法被调用,位于可运行线程池中,等待获取cpu使用权</li>
+<li><strong>运行:</strong> 可运行状态的线程获取了cpu时间片,执行代码</li>
+<li><p><strong>阻塞:</strong> 线程因为某种原因放弃了cpu使用权,直到线程进入可运行状态</p>
+<ul>
+<li><strong>等待阻塞:</strong> 执行了waitt()方法, JVM将该线程放入等待队列中</li>
+<li><strong>同步阻塞:</strong> 获取对象锁失败, JVM将该线程放入锁池(lock pool)中</li>
+<li><strong>其他阻塞:</strong> 执行了sleep()方法,或者发出了I/O请求, JVM将该线程置为阻塞状态,当sleep()状态超时或者I/O处理完毕线程重新转入可运行状态</li>
+</ul>
+</li>
+<li><p><strong>死亡:</strong> 线程的方法执行结束或者发生异常</p>
+</li>
+</ul>
+<h2 id="wait-notify流程"><a href="#wait-notify流程" class="headerlink" title="wait/notify流程"></a>wait/notify流程</h2><ul>
+<li>线程A获取对象锁并且进入同步代码块执行锁对象的wait()方法(立即释放锁),通知锁监听器,释放锁并且进入等待队列</li>
+<li>线程B获取对象锁并且进入同步代码块执行锁对象的notify/notifyAll方法,告诉锁监听器,通知该对象锁的等待队列 <strong>(执行notify/notifyAll方法并不立即释放锁,只有退出同步代码块才释放对象锁)</strong></li>
+<li>线程A得到锁监听器的通知,移出等待队列变成可运行状态,并且尝试获取锁执行代码</li>
+</ul>
+<h2 id="wait-notify与synchronized"><a href="#wait-notify与synchronized" class="headerlink" title="wait/notify与synchronized"></a>wait/notify与synchronized</h2><p>执行wait/notify必须要加synchronized锁,因为synchronized代码块生成的字节码中包含<strong>monitorenter</strong>与<strong>monitorexit</strong>指令。</p>
+<p>monitorenter指令可以获取对象的monitor,而wait()方法的底层实现依赖于该对象的monitor,即如果在synchronized代码中执行,必定获取到了对象的monitor。</p>
+<h2 id="wait-notify与cpu资源"><a href="#wait-notify与cpu资源" class="headerlink" title="wait/notify与cpu资源"></a>wait/notify与cpu资源</h2><p>wait/nofity是通过JVM里的<strong>park/unpark</strong>机制来实现的,在Linux下这种机制又是通过<br><strong>pthread_cond_wait/pthread_cond_signal</strong> 来实现的，因此当线程进入到wait状态的时候其实是会放弃cpu的，也就是说这类线程是不会占用cpu资源。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/06/非对称加密以及RSA加密/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1448,7 +1621,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1470,7 +1643,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
