@@ -249,6 +249,367 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/程序编译与代码优化之运行期/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/18/程序编译与代码优化之运行期/" itemprop="url">程序编译与代码优化之运行期</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-18T21:09:45+08:00">
+                2018-12-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/深入理解Java虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">深入理解Java虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Java程序最初是通过解释器进行解释执行的，当虚拟机发现某个方法或者代码块的运行特别频繁时，虚拟机会将这些代码翻译成本地平台相关的机器码，并且进行各种层次的优化，完成这个任务的编译器叫做即时编译器（JIT编译器）。</p>
+<h2 id="HotSpot内的即时编译器"><a href="#HotSpot内的即时编译器" class="headerlink" title="HotSpot内的即时编译器"></a>HotSpot内的即时编译器</h2><h3 id="解释器与编译器"><a href="#解释器与编译器" class="headerlink" title="解释器与编译器"></a>解释器与编译器</h3><p>解释器可以省去编译的时间，立即执行。编译器可以将代码编译成本地代码，获得更高的执行效率。</p>
+<p>解释器可以作为编译器激进优化的一个逃生门，让编译器根据概率选择一些大多数时候能提升运行素的的优化手段，如果假设不成立可以通过逆优化退回到解释状态据需执行。</p>
+<h3 id="编译对象和触发条件"><a href="#编译对象和触发条件" class="headerlink" title="编译对象和触发条件"></a>编译对象和触发条件</h3><p>在运行阶段被即时编译器编译的热点代码有两类：</p>
+<ol>
+<li>被多次调用的方法</li>
+<li>被多次执行的循环体</li>
+</ol>
+<p>这两种情况JIT编译器都会把整个方法作为编译对象。</p>
+<p>判断一段代码是不是热点代码的行为成为热点探测，目前热点探测判定标准有两种：</p>
+<ol>
+<li>基于采样的热点探测：虚拟机会周期性的检查各个线程的栈顶，如果发现某个方法经常出现在栈顶，那么这个方法就是热点方法。</li>
+<li>基于计数器的热点探测：虚拟机会为每个方法甚至是代码块建立计数器，统计执行次数，如果超过某个阈值就认为他是热点方法。</li>
+</ol>
+<p>在HotSpot虚拟机中采用了第二种方法，为每个方法准备了两类计数器：方法调用计数器和回边计数器。</p>
+<p>方法调用计数器其交互过程如下所示：</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E4%B8%8E%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%9C%9F_1.png" alt="image"></p>
+<p>方法调用计数器统计的是一段时间内方法的执行频率。当超过一定时间限度此方法调用次数仍不足以让它提交给即时编译器编译，那么他的调用计数器就会较少一半。</p>
+<p>回边计数器作用是统计一个方法中循环体代码执行的次数，在字节码中遇到控制流向后跳转的指令成为回边。回边计数器的交互过程如下所示：</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E4%B8%8E%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%9C%9F_2.png" alt="image"></p>
+<p>回边计数器统计的是方法循环执行的绝对次数，没有计数热度衰减的过程。</p>
+<h3 id="编译过程"><a href="#编译过程" class="headerlink" title="编译过程"></a>编译过程</h3><p>后台编译分三个阶段：</p>
+<ol>
+<li>一个平台独立的前端将字节码构造成一种高级中间代码表示（HIR），HIR使用静态单分配的形式来代表代码值，在此之前会完成如方法内联，常量传播等优化。</li>
+<li>一个平台相关的后端从HIR中产生低级中间代码表示，自此之前完成如空值检查消除，范围检查消除等操作。</li>
+<li>在平台相关的后端使用现行扫描算法在LIR上分配寄存器，并且在LIR上做窥孔优化，然后产生机器代码。</li>
+</ol>
+<h2 id="编译优化技术"><a href="#编译优化技术" class="headerlink" title="编译优化技术"></a>编译优化技术</h2><h3 id="公共子表达式消除"><a href="#公共子表达式消除" class="headerlink" title="公共子表达式消除"></a>公共子表达式消除</h3><p>如果一个表达式E已经计算过了，而且从先前的计算到现在E中所有变量的值都没有发生变化，那么E的这次出现就成为了公共子表达式。对于这种表达式，字需要直接用前面计算过的表达式结果代替E就可以了。</p>
+<h3 id="数组边界检查消除"><a href="#数组边界检查消除" class="headerlink" title="数组边界检查消除"></a>数组边界检查消除</h3><p>如果编译器只要通过数据流分析就可以判定循环变量的取值范围永远在区间[0, foo.length)之内，拿在整个循环中就可以把数组的上下界消除，节约了多次的条件判定操作。</p>
+<p>减少隐式开销的方法除了将这种数组边界检查优化尽可能提前到编译器完成之外，还有一种方法——隐式异常处理，java中空指针检查和算术异常检查都采用这种方法。</p>
+<p>Java伪代码来表示虚拟机访问foo.value的过程示例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if(foo != null)&#123;</span><br><span class="line">    return foo.value;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    throw new NullPointException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用隐式优化后，虚拟机将上面的代码表示的访问过程变成下面的伪代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">try&#123;</span><br><span class="line">    return foo.value;</span><br><span class="line">&#125;catch(segment_fault)&#123;</span><br><span class="line">    uncommon_trap();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>虚拟机会注册一个Segment Fault信号的异常处理器，当foo不为空时，对value的访问是不会额外消耗一次对foo判空的开销。若foo为空，必须转入到异常处理器中恢复并且抛出空指针异常，这个过程从用户态转入内核态处理然后再回到用户态，速度 非常慢。</p>
+<p>如果foo极少为空的时候，优化是值得的。HotSpot虚拟机会根据运行期间收集到的Profile信息自动选择最优方案。</p>
+<h3 id="方法内联"><a href="#方法内联" class="headerlink" title="方法内联"></a>方法内联</h3><p>Java虚拟机设计团队为了解决虚方法内联问题引入了一个名为类型继承关系分析（CHA）的技术。</p>
+<p>编译器在进行内联时，如果是非虚方法直接进行内联即可。</p>
+<p>如果是虚方法，则向CHA查询此方法在当前程序下是否有多个版本可以选择，如果查询到只有一个版本可以进行内联，不过这种内联属于激进优化，需要预留一个逃生门，称为守护内联。如果程序的后续执行过程中，虚拟机一直没有加载到会令这个方法的接受者的继承关系发生变化的类，那么这个内链优化的代码就可以一直执行下去。如果加载了导致继承关系发生变化的新类，那就要抛弃已经编译的代码，退回到解释状态执行，或者重新编译。</p>
+<p>如果CHA查询到多个版本的目标方法可供选择，则编译器会使用内联缓存来完成方法内联。它的工作原理是：在未发生方法调用之前，内联缓存状态为空，当第一次调用发生后，缓存记录下方法接受者的版本信息，而且每次进行方法调用时都比较接受者版本，如果以后进来的每次调用的方法接受者版本都是一样的，那么这个内联还可以一直用下去。如果发生了不一致的情况，就说明程序使用了虚方法的多态特性，这是会取消内敛，查找虚方法表进行方法分派。</p>
+<h3 id="逃逸分析"><a href="#逃逸分析" class="headerlink" title="逃逸分析"></a>逃逸分析</h3><p>逃逸分析的基本行为就是分析对象动态作用域：</p>
+<ol>
+<li>当一个对象在方法中被定义后，他可能被外部方法所引用，例如作为调用参数传递到其他方法中去，称为方法逃逸</li>
+<li>这个对象还有可能被外部线程访问到，譬如赋值给类变量或者可以在其他线程中访问的实例变量，称为线程逃逸</li>
+</ol>
+<p>如果能证明一个对象不会逃逸则可以为这个变量进行一些高效的优化：</p>
+<ul>
+<li>栈上分配：如果确定一个对象不会逃逸出方法，那么可以让这个对象在栈上分配内存，对象所占用的内存空间会随着栈帧出栈而销毁。</li>
+<li>同步消除：如果确定一个变量不会逃逸出线程，那么就可以消除掉这个变量的同步操作。</li>
+<li>标量替换：标量是值一个数据无法被分解成更小的数据，如果可以被继续分解就成为聚合量。如果确定一个对象不会被外部访问，那么就可以不创建这个对象而创建它的若干被使用到的成员变量。将对象拆分后，除了能将它的成员变量在栈上分配和读写外，还可以成为后续进一步的优化手段创建条件。</li>
+</ul>
+<h2 id="Java与C-C-的编译器对比"><a href="#Java与C-C-的编译器对比" class="headerlink" title="Java与C/C++的编译器对比"></a>Java与C/C++的编译器对比</h2><p>Java虚拟机的即时编译器与C/C++的静态编译期相比，可能会由于以下五个原因而导致输出的本地代码有一些劣势：</p>
+<ol>
+<li>即时编译器占用的是用户程序的运行时间</li>
+<li>Java是动态的类型安全语言，意味着虚拟机会频繁进行动态检查</li>
+<li>Java使用虚方法的频率高，意味着运行时对方法接受者进行多态选择频率高，编译器在进行优化（方法内联）的难度大</li>
+<li>Java是可以进行动态扩展的，使全局性优化难以进行</li>
+<li>Java对象那个的内存分配都是在堆上进行的，只有方法中的局部变量才在栈上分配</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/程序编译与代码优化之编译期/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/18/程序编译与代码优化之编译期/" itemprop="url">程序编译与代码优化之编译期</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-18T19:39:58+08:00">
+                2018-12-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/深入理解Java虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">深入理解Java虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>当前提到的编译期指将.java文件转化为.class文件，Java为了让其他不是javac产生的文件（如JPython，JRuby）也能得到编译器优化的好处，所以性能的优化大多放在了后端的即时编译器中。</p>
+<h2 id="javac编译过程"><a href="#javac编译过程" class="headerlink" title="javac编译过程"></a>javac编译过程</h2><h3 id="解析与填充符号表"><a href="#解析与填充符号表" class="headerlink" title="解析与填充符号表"></a>解析与填充符号表</h3><p>解析步骤包括了经典程序编译原理中的词法分析和语法分析两个步骤。</p>
+<h4 id="词法，语法分析"><a href="#词法，语法分析" class="headerlink" title="词法，语法分析"></a>词法，语法分析</h4><p>词法分析是将源代码的字符流转变为标记（Token）集合，Token是编译过程中的最小元素，关键字，变量名，字面量，运算符都可以成为Token。</p>
+<p>语法分析是根据Token序列构造抽象语法树的过程，语法树的每一个节点都代表着程序代码中的一个语法结构，例如包，类型，修饰符，运算符，借口，返回值甚至代码注释。</p>
+<h4 id="填充符号表"><a href="#填充符号表" class="headerlink" title="填充符号表"></a>填充符号表</h4><p>符号表是由一组符号地址和符号信息构成的表格，包含了每一个编译单元的抽象语法树的顶级结点，以及package-info.java的顶级结点。</p>
+<p>在语义分析中，符号表所登记的内容将用于语义检查和产生中间代码。在目标代码生成阶段，符号表是地址分配的依据。</p>
+<h3 id="注解处理器"><a href="#注解处理器" class="headerlink" title="注解处理器"></a>注解处理器</h3><p>插入式注解处理器在编译器注解进行处理，可以读取，修改，添加抽象语法树中的任意元素。如果其在矗立著节期间对语法树进行了修改，编译器将回到解析及填充符号表的过程重新处理。</p>
+<h3 id="语义分析和字节码生成"><a href="#语义分析和字节码生成" class="headerlink" title="语义分析和字节码生成"></a>语义分析和字节码生成</h3><p>语义分析是对结构上正确的源程序进行上下文有关性质的审查。</p>
+<h4 id="标注检查"><a href="#标注检查" class="headerlink" title="标注检查"></a>标注检查</h4><p>标注检查内容包括变量使用前是否被声明，变量与赋值之间的数据类型是否能匹配等。</p>
+<p>还有一个重要的动作是常量折叠，例如int a = 1 + 2,经过常量折叠后, a 就会被折叠为3。</p>
+<h4 id="数据及控制流分析"><a href="#数据及控制流分析" class="headerlink" title="数据及控制流分析"></a>数据及控制流分析</h4><p>数据及控制流分析对程序上下文逻辑更进一步的验证，检查出诸如程序局部变量在使用前是否赋值，方法的每条路径是否都有返回值，是否所有的受检查异常都被正确处理。</p>
+<p>PS:将局部变量声明为final对运行期是没有任何影响的，变量的不变性仅仅由编译期保障。</p>
+<h4 id="解语法糖"><a href="#解语法糖" class="headerlink" title="解语法糖"></a>解语法糖</h4><p>Java最常见的语法糖是泛型，变长数组，自动拆装箱等，他们在编译器还原为基础语法。</p>
+<h4 id="字节码生成"><a href="#字节码生成" class="headerlink" title="字节码生成"></a>字节码生成</h4><p>javac编译的最后一个阶段，不仅将之前的生成的信息转换为字节码并且还进行了少量的代码转换工作。</p>
+<p>之前提到的实例构造器<init>()方法和类构造器方法<clinit>()就是这个阶段添加到语法树中的。</clinit></init></p>
+<h2 id="Java语法糖"><a href="#Java语法糖" class="headerlink" title="Java语法糖"></a>Java语法糖</h2><h3 id="泛型与类型擦除"><a href="#泛型与类型擦除" class="headerlink" title="泛型与类型擦除"></a>泛型与类型擦除</h3><p>Java中的泛型只在程序源码中出现，在编译后的字节码文件中，就已经替换为了原来的原生类型，并且在相应的地方插入了强转代码。这种实现方法叫做类型擦除。</p>
+<p>正是由于类型擦除的原因，泛型擦除成相同的元生类型是无法重载的原因。</p>
+<h3 id="自动拆装箱和遍历循环"><a href="#自动拆装箱和遍历循环" class="headerlink" title="自动拆装箱和遍历循环"></a>自动拆装箱和遍历循环</h3><p>自动拆装箱在被变异之后被转换成了对应的包装盒还原方法，遍历循环还原了迭代器的实现，正因此遍历循环必须实现Iterable接口。</p>
+<h3 id="条件编译"><a href="#条件编译" class="headerlink" title="条件编译"></a>条件编译</h3><p>编译器会根据布尔值的真假将分之中不成立的代码块消除掉。这一工作将会在编译器解除语法糖阶段完成。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>将java代码转变成字节码的编译器称为前端编译器，因为他只完成了从程序到抽象语法树或者中间字节码的生成，此外还有即时编译器完成从字节码到本地机器代码的生成。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/14/访问网站流程/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1618,317 +1979,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/常见加密算法概述/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dawn">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/05/常见加密算法概述/" itemprop="url">常见加密算法概述</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-05T17:52:47+08:00">
-                2018-12-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">学习笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>常见的加密算法可以分为三类,即对称加密算法、非对称加密算法以及hash算法。</p>
-<h1 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h1><p>对称加密指加密和解密使用相同密钥的加密。</p>
-<p>对称性加密算法的安全性取决于加密密钥的保存情况,但是密钥会随着用户的增加而膨胀。</p>
-<p><strong>常见的对称加密算法:</strong> AES、DES、3DES、IDEA等。</p>
-<h1 id="非对称加密"><a href="#非对称加密" class="headerlink" title="非对称加密"></a>非对称加密</h1><p>非对称加密指加密和解密使用不同密钥的加密算法,也称为公私钥加密。</p>
-<p>双方交换数据,首先使用对方的公钥进行加密,对方可使用自己的私钥进行解密。</p>
-<p>由于公钥是公开的,即用户只需要保存私钥即可,简化了密钥的分发,但是非对称加密的效率与对称性加密相比十分低下。</p>
-<p><strong>常见的非对称加密算法:</strong> RSA、ECC(移动设备)、DSA(数字签名)等。</p>
-<h1 id="Hash算法"><a href="#Hash算法" class="headerlink" title="Hash算法"></a>Hash算法</h1><p>Hash算法是一种单向不可逆的算法,因此常被用在不可还原的密码存储、信息完整性校验等。</p>
-<p><strong>常见的Hash算法:</strong> MD5、SHA、SHA-1等。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/Https详解/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dawn">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/05/Https详解/" itemprop="url">Https详解</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-05T15:36:28+08:00">
-                2018-12-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">学习笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="HTTPS连接过程"><a href="#HTTPS连接过程" class="headerlink" title="HTTPS连接过程"></a>HTTPS连接过程</h2><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_https_1.png" alt="image"></p>
-<h2 id="HTTPS的详细连接流程"><a href="#HTTPS的详细连接流程" class="headerlink" title="HTTPS的详细连接流程"></a>HTTPS的详细连接流程</h2><p><strong>1.客户端向服务端发送https请求</strong></p>
-<p><strong>2.服务器端生成公钥与私钥</strong></p>
-<p><strong>3.服务器端向客户端返回公钥</strong></p>
-<p>公钥包含证书的颁发机构、过期时间等</p>
-<p><strong>4.客户端验证公钥</strong></p>
-<p>客户端验证公钥的有效性,如果验证失败则抛出异常;否则生成一个随机值作为密钥,并且使用服务端的公钥加密密钥</p>
-<p><strong>5.客户端向服务端发送密钥</strong></p>
-<p><strong>6.服务端获取密钥,对内容加密</strong></p>
-<p>服务端收到加密后的密钥,通过私钥解密得到客户端的密钥,并且使用密钥将内容进行对称加密</p>
-<p><strong>7.服务端向客户端传输密文</strong></p>
-<p><strong>8.客户端解密密文</strong></p>
-<p>客户端通过之前生成的密钥解密密文,得到内容</p>
-<h1 id="中间人劫持攻击"><a href="#中间人劫持攻击" class="headerlink" title="中间人劫持攻击"></a>中间人劫持攻击</h1><h2 id="中间人劫持攻击过程"><a href="#中间人劫持攻击过程" class="headerlink" title="中间人劫持攻击过程"></a>中间人劫持攻击过程</h2><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_https_2.png" alt="image"></p>
-<h2 id="中间人攻击的预防"><a href="#中间人攻击的预防" class="headerlink" title="中间人攻击的预防"></a>中间人攻击的预防</h2><p>中间人劫持攻击的前提是客户端信任中间人的证书,而造成这种情况一般是服务端没有对服务端证书及域名作校验或者校验不完整。</p>
-<ol>
-<li>客户端预埋证书的方式锁死证书,只有当客户端证书和服务端证书完全一致才允许通信(证书过期需要强制更新或者要求下载证书)</li>
-<li>客户端校验域名、证书有效期、证书关键信息以及证书链</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1979,7 +2029,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1990,7 +2040,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
