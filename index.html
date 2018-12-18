@@ -249,6 +249,883 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/深入理解Java类加载/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/18/深入理解Java类加载/" itemprop="url">深入理解Java类加载</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-18T23:19:50+08:00">
+                2018-12-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/深入理解Java虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">深入理解Java虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="类加载的过程"><a href="#类加载的过程" class="headerlink" title="类加载的过程"></a>类加载的过程</h1><p>详细讲解一下类加载的过程，也就是加载，验证，准备，解析和初始化这5个阶段所执行的具体动作。</p>
+<p>##加载</p>
+<p>加载阶段，虚拟机要完成三件事：</p>
+<ol>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流。</li>
+<li>讲这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。</li>
+<li>在内存生成一个代表这个类的Class对象，作为方法区这个类的各种数据的访问入口。</li>
+</ol>
+<p>其中二进制字节流可以从ZIP包中获取，从网络获取，运行时计算生成，由其他文件生成，由数据库生成等。</p>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>验证是连接阶段的第一步，这一阶段的目的是为了确保Class文件的字节流中包含的信息符号当前虚拟机的要求并且不会危害虚拟机的安全。</p>
+<p>验证分为以下四步：文件格式验证，元数据验证，字节码验证，符号引用验证。</p>
+<ol>
+<li><p>文件格式验证：<br> 保证输入的字节流能正确的解析并且存储于方法区内，格式上符号描述一个Java类型信息的要求。此阶段验证是基于二进制字节流进行的，只有通过了这个阶段的验证后，字节流彩绘进入内存的方法区进行存储，所以后面的3个验证阶段全部是基于方法区的存储结构进行的，不会直接操作字节流。</p>
+</li>
+<li><p>元数据验证：<br> 对类的原数据信息进行语义校验，保证不存在不符合Java语言规范的元数据信息。</p>
+</li>
+<li><p>字节码验证：<br> 整个验证最复杂的一个阶段。通过数据流和控制流分析，确定程序语义是合法的，是符合逻辑的。  </p>
+</li>
+<li><p>符号引用验证：<br> 发生在虚拟机将符号引用转化为直接饮用的时候，整个动作可以看做是对类自身以外的信息进行匹配性校验。</p>
+</li>
+</ol>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>准备阶段正式为类分配内存并且设置变量的初值，这些变量使用的内存将在方法区中进行分配。这时候进行内存分配的仅包括类变量而不包括实例变量，实例变量会在对象实例化时随着对象一起分配在Java堆中。</p>
+<h2 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h2><p>解析是虚拟机将常量池内的符号引用替换为直接引用的过程。</p>
+<ul>
+<li>符号引用：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要能在使用时无歧义地定位到目标即可，符号引用的字面量形式明确定义在Java虚拟机规范的Class文件格式中。有符号引用，对象不一定在内存中存在。</li>
+<li>直接引用：直接引用可以是直接指向目标的指针，相对偏移量或者是一个能间接定位到目标的句柄。如果有了直接引用那么对象一定在内存中存在。</li>
+</ul>
+<p>解析动作主要针对于类或接口，字段，类方法，接口方法，方法类型，方法句柄和调用点限符7类符号引用</p>
+<h3 id="类或接口的解析"><a href="#类或接口的解析" class="headerlink" title="类或接口的解析"></a>类或接口的解析</h3><p>当前代码所处的类为D，要将一个未解析过的符号引用N解析为一个类或者接口C的直接引用，分三个步骤：</p>
+<ol>
+<li>如果C不是一个数组类型，那么虚拟机会将代表它的全限定名传递给D的类加载器去加载这个类C</li>
+<li>如果C是一个数组，而且数组的元素类型为对象，也就是N的描述符回事类似[Ljava/lang/Integer的形式，会按照第一点的规则加载数组元素类型。接着由虚拟机生成一个代表此元素维度和元素的数组对象</li>
+<li>确认D是否对C的访问权限</li>
+</ol>
+<h3 id="字段解析"><a href="#字段解析" class="headerlink" title="字段解析"></a>字段解析</h3><p>字段所属的类或者接口用C标示，解析字段分四个步骤：</p>
+<ol>
+<li>如果C本省包含了简单名称和字段描述符都匹配的字段，则查找结束</li>
+<li>如果C中实现了接口，会按照继承关系递归搜索，如果找到包含了简单名称和字段描述符都匹配的字段，则查找结束</li>
+<li>如果C不是java.lang.Object,则按照继承关系从下往上递归搜索其父类，如果找到包含了简单名称和字段描述符都匹配的字段，则查找结束</li>
+<li>否则，则查找失败</li>
+</ol>
+<h3 id="类方法解析"><a href="#类方法解析" class="headerlink" title="类方法解析"></a>类方法解析</h3><p>类方法解析分为五步：</p>
+<ol>
+<li>类方法和接口方法引用的常量类型定义是分开的，如果在类方法中发现class_index项中索引的C是个接口，那么就直接抛出异常</li>
+<li>在类C中查找是否有简单名称和描述符都与目标相匹配的方法，若有则查找结束</li>
+<li>在类C的父类中递归查找，若有简单名称和描述符都与目标相匹配的方法则查找结束</li>
+<li>在类C的接口列表以及他们的父接口中查找，若有简单名称和描述符都与目标相匹配的方法则查找结束</li>
+<li>否则查找失败</li>
+</ol>
+<h3 id="接口方法解析"><a href="#接口方法解析" class="headerlink" title="接口方法解析"></a>接口方法解析</h3><p>接口方法解析分为四步：</p>
+<ol>
+<li>如果发现class_index中的索引是个类而不是接口，那么直接抛出异常</li>
+<li>否则在接口C中查找是否有简单名称和描述符都相匹配的方法，如果有则查找结束</li>
+<li>否则在接口C的父接口中递归查找，知道java.lang.Object为止，看否有简单名称和描述符都相匹配的方法，如果有则查找结束</li>
+<li>否则查找失败</li>
+</ol>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>类初始化时类加载过程的最后一步，到了初始化阶段，才真正开始执行类中定义的Java程序代码（字节码）。</p>
+<p>初始化阶段是执行类构造器<clinit>()方法的过程，以下是<clinit>()方法的特点：</clinit></clinit></p>
+<ul>
+<li><clinit>()方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块中的语句合并产生的，其顺序由语句在源文件中出现的顺序决定</clinit></li>
+<li><clinit>()方法与类的狗构造器不同，他不需要显式的调用父类构造器，虚拟机保证子类的<clinit>()方法执行之前父类的<clinit>()方法已经执行完毕</clinit></clinit></clinit></li>
+<li>由于父类的<clinit>()方法先执行，所以父类的静态语句要优先于子类变量赋值操作</clinit></li>
+<li>如果一个类中，没有静态语句块，也没有对变量的赋值操作，那么编译器可以不生成<clinit>()方法</clinit></li>
+<li>接口中不能使用静态语句块，但是可以有变脸初始化的赋值操作</li>
+<li>虚拟机保证一个类的<clinit>()方法在多线程环境下被正确的加锁，同步，如果多个线程同事去初始化一个类，那么只有一个线程去执行这个类的<clinit>()方法，其他线程都需要阻塞知道活动线程<clinit>()方法执行完毕</clinit></clinit></clinit></li>
+</ul>
+<h1 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h1><p>类加载器可以实现通过一个类的全限定名来获取描述此类的二进制字节流。</p>
+<h2 id="类与类加载器"><a href="#类与类加载器" class="headerlink" title="类与类加载器"></a>类与类加载器</h2><p>对于任意一个类，都需要由加载它的类加载器和这个类本身一同确立在Java虚拟机中的唯一性。</p>
+<p>虽然是同一个类，但是如果通过不同的类加载器加载，做对象所属类型检查时仍然是false。</p>
+<h2 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h2><p>大部分Java程序都会使用到以下3中系统提供的类加载器：</p>
+<ol>
+<li>启动类加载器(Booststrap ClassLoader)</li>
+<li>扩展类加载器(Extensioin ClassLoader)</li>
+<li>应用程序类加载器(Application ClassLoader)</li>
+</ol>
+<p>这些加载器的关系如下所示：</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E7%B1%BB%E5%8A%A0%E8%BD%BD_1.png" alt=""></p>
+<p>双亲委派模型的工作过程是：当一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委托给父类加载器去完成，每一个层次的类加载器都是如此。</p>
+<p>使用双亲委派模型的好处就是java类随着他的类加载器一起具备了一种带有优先级的层次关系。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/高效并发之Java内存模型与线程/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/18/高效并发之Java内存模型与线程/" itemprop="url">高效并发之Java内存模型与线程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-18T22:16:55+08:00">
+                2018-12-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/深入理解Java虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">深入理解Java虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Java内存模型和线程"><a href="#Java内存模型和线程" class="headerlink" title="Java内存模型和线程"></a>Java内存模型和线程</h1><h2 id="硬件的效率与一致性"><a href="#硬件的效率与一致性" class="headerlink" title="硬件的效率与一致性"></a>硬件的效率与一致性</h2><p>由于处理器和主存速度差异巨大，所以产生了高速缓存作为两者其中的缓冲。</p>
+<p>高速缓存的出现解决了速度不匹配的问题，不过也带来了新的问题：缓存一致性。在多处理器系统中每个处理器都有自己的高速缓存，而他们却共享同一主存。运算时可能导致不同处理器缓存数据不一致，那同步回主存的缓存数据以谁为准呢？</p>
+<p>为了解决缓存一致性问题，每个处理器访问缓存都遵循一些协议。</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_1.jpg" alt="image"></p>
+<p>为了充分利用处理器内部的运算单元尽量被利用，处理器可能会对输入代码进行乱序执行优化。</p>
+<h2 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a>Java内存模型</h2><p>Java虚拟机试图定义一种Java内存模型来屏蔽掉各种硬件和操作系统的内存访问差异。</p>
+<h3 id="主内存和工作内存"><a href="#主内存和工作内存" class="headerlink" title="主内存和工作内存"></a>主内存和工作内存</h3><p>Java内存模型规定了所有变量都存储在主内存，每条线程还有自己的工作内存，线程的工作内存中保存了被该线程使用到的变量的主内存副本拷贝。</p>
+<p>线程对变量的所有操作（读取，赋值等）操作都必须在工作内存中进行，而不能直接读写主内存的变量，线程间变量值的传递均需要通过主内存来完成，线程，主内存，工作内存三者的交互关系如图所示：</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_2.jpg" alt="image"></p>
+<p>此处的变量包括实例字段，静态字段和构成数组对象的元素，但不包括局部变量和方法参数，因为后者是线程私有的。</p>
+<h3 id="内存间交互操作"><a href="#内存间交互操作" class="headerlink" title="内存间交互操作"></a>内存间交互操作</h3><p>Java内存模型中定义了以下8中操作完成一个变量如何从主内存拷贝到工作内存，如何从工作内存同步回主内存之类的实现细节。</p>
+<ol>
+<li>lock（锁定）：作用于主内存的变量，把一个变量标识为一条线程独占的状态</li>
+<li>unlock（解锁）：作用于主内存的变量，把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他变量锁定</li>
+<li>read（读取）：作用于主内存的变量，把一个变量的值从主内存传输到线程的工作内存中，以便以后的load动作使用</li>
+<li>load（载入）：作用于工作内存的变量，它把read操作从主内存中得到的变量值放入工作内存的变量副本中</li>
+<li>use（使用）：作用于工作内存的变量，它把工作内存中的一个变量的值传递给执行引擎，每当虚拟机遇到一个需要使用到变量的值得字节码指令时会执行这个操作</li>
+<li>assign（赋值）：作用于工作内存的变量，它把一个从执行引擎收到的值赋给工作内存的变量，每当虚拟机遇到一个给变量赋值的字节码指令时执行此操作</li>
+<li>store（存储）：作用于工作内存的变量，它把工作内存中的一个变量的值传送到主内存中，以便以后的write操作使用</li>
+<li>write（写入）：作用于主内存的变量，它把store操作从工作内存中得到的变量的值放入主内存的变量中</li>
+</ol>
+<p>如果要把一个值从主内存复制到工作内存，那就要顺序的执行read和load操作，如果要把变量从工作内存同步回主内存，就要顺序执行store和write操作。然而顺序执行并不是连续执行。</p>
+<p>Java内存模型还规定了以下规则：</p>
+<ul>
+<li>不允许read和load,store和write操作之一单独出现，即不允许出现一个变量从主内存读取了但是工作内存不接受，或者从工作内存发起了回写但是主内存不接受的情况出现</li>
+<li>不允许一个线程丢弃他最近的assign操作，即变量在工作内存中改变了之后必须把该变化同步回主存</li>
+<li>不允许一个线程无原因地（没有发生任何assign操作）把数据从线程的工作内存同步回主内存</li>
+<li>一个新的变量只能从主内存中诞生，不允许在工作内存中直接使用一个未被初始化的变量</li>
+<li>一个变量在同一时刻只允许一条线程对其进行lock操作，但是lock操作可以被同一条线程重复执行多次，同时只有执行相同次数的unlock操作，变量才会被解锁</li>
+<li>如果对一个变量执行lock操作，那么会清空工作内存中此变量的值，在执行引擎使用这个变量之前需要重新执行load或assign操作初始化变量的值</li>
+<li>如果一个变量未被lock，那么不允许对他执行unlock</li>
+<li>对一个变量执行unlock之前，必须把次变量同步回主内存</li>
+</ul>
+<h3 id="对于volatile型变量的特殊规则"><a href="#对于volatile型变量的特殊规则" class="headerlink" title="对于volatile型变量的特殊规则"></a>对于volatile型变量的特殊规则</h3><p>当一个变量定义为volatile之后，它具备两个特性：</p>
+<ol>
+<li>保证此变量对所有线程的可见性，即单轨条线程修改了这个变量的值，新值对于其他线程来说是立即可知的</li>
+<li>禁止指令重排序优化</li>
+</ol>
+<p>假设T表示一个线程，V和W分别代表两个volatile变量，那么有如下规则：</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_3.jpg" alt="image"></p>
+<h3 id="long和double型变量的特殊规则"><a href="#long和double型变量的特殊规则" class="headerlink" title="long和double型变量的特殊规则"></a>long和double型变量的特殊规则</h3><p>Java内存模型要求8个基本操作具有原子性。</p>
+<p>但对于64位数据（long和double），模型中定义了一条相对宽松的规定：允许虚拟机将没有volatile修饰的64位数据的读写操作划分为两次32位操作。</p>
+<p>这就是long和double的非原子性协定。</p>
+<h3 id="原子性，可见性和有序性"><a href="#原子性，可见性和有序性" class="headerlink" title="原子性，可见性和有序性"></a>原子性，可见性和有序性</h3><p>Java内存模型是围绕着在并发过程中如何处理原子性，可见性和有序性这3个特征来建立的。</p>
+<p>原子性：基本数据类型的访问读写是具备原子性的（double和long例外）。</p>
+<p>可见性：指一个线程修改了共享变量的值，其他线程能够立即得知这个修改。能实现可见性的有volatile，synchronized和final。同步快的可见性是由对一个变量执行unlock之前，必须先把此变量同步回主内存。</p>
+<p>有序性：如果在本线程内观察，所有的操作都是有序的，如果在一个线程观察另一个线程，所有的操作都是无序的。前半句指的是线程内表现为串行执行，后半句指的是指令重排序现象和工作内存与主内存同步延迟。能实现有序性的有volatile和synchronized，synchronized是通过一个变量在同一时刻只允许一条线程对其进行lock操作这条规则获得的。</p>
+<h3 id="先行发生原则"><a href="#先行发生原则" class="headerlink" title="先行发生原则"></a>先行发生原则</h3><p>先行发生原则事发生在Java内存模型中定义的两项操作中的偏序关系，如果操作A现行发生于操作B，操作A产生的影响就能被操作B观察到。</p>
+<p>下面是Java内存模型下一些天然的先行发生关系：</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_4.jpg" alt="image"></p>
+<h1 id="Java与线程"><a href="#Java与线程" class="headerlink" title="Java与线程"></a>Java与线程</h1><h2 id="线程的实现"><a href="#线程的实现" class="headerlink" title="线程的实现"></a>线程的实现</h2><p>线程可以共享进程资源，又可以独立调度（线程是CPU调度的基本单位）。</p>
+<p>线程的实现主要有三种方式：使用内核实现，使用用户线程实现，使用用户线程加轻量级进程混合实现。</p>
+<h3 id="使用内核线程实现"><a href="#使用内核线程实现" class="headerlink" title="使用内核线程实现"></a>使用内核线程实现</h3><p>这种线程由内核来完成线程切换，每个内核线程可视为内核的一个分身，这样操作系统就可以同时处理多件事情，支持多线程的内核就叫做多线程内核。</p>
+<p>程序一般不直接使用内核线程而使用轻量级进程（LWP就是线程）。轻量级进程与内核线程之间1:1的关系称为一对一的线程模型。</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_5.jpg" alt="image"></p>
+<ul>
+<li><p>优点：即便有一个轻量级进程阻塞了也不影响整个进程执行</p>
+</li>
+<li><p>缺点：系统调用代价高，需要在用户态和内核态之间来回切换</p>
+</li>
+</ul>
+<h3 id="使用用户线程实现"><a href="#使用用户线程实现" class="headerlink" title="使用用户线程实现"></a>使用用户线程实现</h3><p>广义上来讲，一个线程只要不是内核线程就可以被认为是用户线程（UT）。</p>
+<p>狭义上来讲，用户线程是完全建立在用户空间的线程库上，系统内核不能感知线程存在的实现。用户线程的各种操作建立在用户的线程库上，如果程序得当，这种线程不需要切换到内核态。</p>
+<p>部分高性能数据库中的多线程就是使用用户线程实现的，这种进程与用户县城之间1：N的关系称为一对多的线程模型。</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_6.jpg" alt="image"></p>
+<ul>
+<li><p>优点：不需要系统内核支援</p>
+</li>
+<li><p>缺点：不需要系统内核支援</p>
+</li>
+</ul>
+<h3 id="使用用户线程加轻量级进程混合实现"><a href="#使用用户线程加轻量级进程混合实现" class="headerlink" title="使用用户线程加轻量级进程混合实现"></a>使用用户线程加轻量级进程混合实现</h3><p>这种实现方式下，即存在用户线程，也存在轻量级进程。 </p>
+<p>用户线程的各项操作依然廉价，而且可以使用内核提供的线程调度更能以及处理器映射。</p>
+<p>这种模式中，用户线程与轻量级进程的数量比是不定的，为N:M的关系。</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_7.jpg" alt="image"></p>
+<h3 id="Java线程的实现"><a href="#Java线程的实现" class="headerlink" title="Java线程的实现"></a>Java线程的实现</h3><p>在目前的JDK版本中，操作系统支持什么怎样的线程模型，很大程度上了决定了Java虚拟机中的线程是怎样映射的。</p>
+<h2 id="Java线程调度"><a href="#Java线程调度" class="headerlink" title="Java线程调度"></a>Java线程调度</h2><p>线程调度指的是系统为线程分配处理器使用权的过程，主要调度分两种，分别是协同式线程调度和抢占式线程调度。</p>
+<p>协同式调度：线程的执行时间由线程自己决定，一个线程将自己的工作执行完毕后会主动通知系统切换到另外一个线程上。</p>
+<p>抢占式调度：线程的执行时间由系统决定。</p>
+<p>我们可以设置线程优先级来建议系统分配线程的执行时间，不过由于线程调度取决于具体的操作系统，所以并不一定奏效。</p>
+<h2 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h2><p>Java定义了5种线程状态：</p>
+<ol>
+<li>新建（New）：创建后尚未启动的线程处于这种状态</li>
+<li>运行（Runble）：Runble包括了操作系统状态中的Running和Ready，这个状态下的线程可能正在运行或者正在等待CPU分配时间片</li>
+<li>无限期等待（Waiting）：处于这种状态的线程不会被分配CPU执行时间，他们要等待被其他线程显示的唤醒，以下方法会让线程陷入无限期的等待状态：<ul>
+<li>没有设置Timeout参数的Object.wait()方法</li>
+<li>没有设置Timeout参数的Thread.join()方法</li>
+<li>LockSupport.parl()方法</li>
+</ul>
+</li>
+<li>限期等待：处于这种状态的线程也不会被分配CPU执行时间，不过无需其他线程显示唤醒，在一段时间之后他们有系统自动唤醒。以下方法会让线程进入限期等待状态：<ul>
+<li>Thread.sleep()方法</li>
+<li>设置了Timeout参数的Object.wait()方法</li>
+<li>设置了Timeout参数的Thread.join()方法</li>
+<li>LockSupport.packNanos()方法</li>
+<li>LockSupport.packUntil()方法</li>
+</ul>
+</li>
+<li>阻塞：线程被阻塞了，等待一个排它锁，这个时间将在另外一个线程放弃这个锁的时候发生</li>
+<li>结束：已终止线程的线程状态，线程已经结束执行</li>
+</ol>
+<p>上述各种状态的相互转换如下图所示：</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_8.jpg" alt="image"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/高效并发之Java线程安全与锁优化/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/18/高效并发之Java线程安全与锁优化/" itemprop="url">高效并发之Java线程安全与锁优化</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-18T22:10:19+08:00">
+                2018-12-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/深入理解Java虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">深入理解Java虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h1><p>当多个线程访问一个对象时，如果不用考虑这些线程在运行环境下的调度和交替执行，也不需要进行额外的同步，或者在调用方法进行任何其他的协调操作，调用这个对象的行为都可以获得正确的记过，那么这个对象时线程安全的。</p>
+<h2 id="Java语言中的线程安全"><a href="#Java语言中的线程安全" class="headerlink" title="Java语言中的线程安全"></a>Java语言中的线程安全</h2><p>按照安全程度由强至弱来排序，我们可以将Java语言中的各种共享的数据分为以下5类：不可变，绝对线程安全，相对线程安全，线程兼容和线程对立。</p>
+<h3 id="不可变"><a href="#不可变" class="headerlink" title="不可变"></a>不可变</h3><p>不可变的对象一定时线程安全的。</p>
+<h3 id="绝对线程安全"><a href="#绝对线程安全" class="headerlink" title="绝对线程安全"></a>绝对线程安全</h3><p>一个类要达到绝对线程安全，通常需要付出很大的，甚至不切实际的代价。在Java API中标注自己是线程安全的类，大多都不是绝对的线程安全。</p>
+<h3 id="相对线程安全"><a href="#相对线程安全" class="headerlink" title="相对线程安全"></a>相对线程安全</h3><p>相对的线程安全就是我们通常意义上所讲的线程安全，需要保证对这个对象单独的操作是线程安全的，但是对于一些特定顺序的连续调用，就可能需要在调用端使用额外的同步手段来保证调用的正确性。</p>
+<h3 id="线程兼容"><a href="#线程兼容" class="headerlink" title="线程兼容"></a>线程兼容</h3><p>对象本身不是线程安全的，但是可以通过在调用端正确的使用同步手段来保证对象在并发环境中可以安全的使用。</p>
+<h3 id="线程对立"><a href="#线程对立" class="headerlink" title="线程对立"></a>线程对立</h3><p>无论调用端是否采取了同步措施，都无法在多线程环境中并发使用的代码。</p>
+<h2 id="线程安全的实现方法"><a href="#线程安全的实现方法" class="headerlink" title="线程安全的实现方法"></a>线程安全的实现方法</h2><h3 id="互斥同步"><a href="#互斥同步" class="headerlink" title="互斥同步"></a>互斥同步</h3><p>同步是指在多个线程并发访问共享数据时，保证共享数据在同一时刻只被一个线程使用。而互斥是实现同步的一种手段，主要实现方式有临界区，互斥量，信号量。</p>
+<p>在Java中使用synchronized关键字实现互斥，其经过编译后，在代码块分别形成monitorenter和monitorexit这两个字节码指令，这两个字节码都需要一个reference类型的参数来指明锁定和解锁的对象。如果没有明确指定那就根据synchronized修饰的是实例方法还是类方法，去取对象实例或者Class对象作为锁对象。</p>
+<p>执行monitorenter指令，首先尝试获取锁，如果这个对象没有被锁定或者已经获取到了锁，就将计数器+1。相应的monitorexit会将锁计数器-1，其值为0时释放锁。</p>
+<p>synchronized同步块对同一条线程来说是可重入的，不会出现把自己锁死的问题。</p>
+<p>如果阻塞或者唤醒一个进程，需要用户态与内核态的转换，所以synchronized是一个非常重量级的操作。</p>
+<h3 id="非阻塞同步"><a href="#非阻塞同步" class="headerlink" title="非阻塞同步"></a>非阻塞同步</h3><p>非阻塞同步就是基于冲突检测的乐观并发策略。</p>
+<p>就是进行先行操作，如果没有其他线程争用共享数据，那么操作就成功了。如果有争用，那就采取其他补偿措施（不断重试，知道成功为止）。</p>
+<p>我们需要操作和冲突检测这两个步骤具有原子性，只能依靠硬件完成。</p>
+<h1 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h1><h2 id="自旋锁与自适应自旋锁"><a href="#自旋锁与自适应自旋锁" class="headerlink" title="自旋锁与自适应自旋锁"></a>自旋锁与自适应自旋锁</h2><p>自旋锁：如果物理机器有一个以上的处理器，能让连个或者两个以上的线程同时并且并行执行，我们就可以让后面请求锁的那个线程稍等一下，但不放弃处理器的执行时间。为了让线程等待，我们只需要让线程执行一个忙循环（自旋）。</p>
+<p>自适应自旋：自旋的时间由上一次在同一个锁上的自选时间以及锁的拥有者的状态来决定。</p>
+<h2 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h2><p>锁消除是指在即时编译器运行时，对一些在代码上要求同步，但是被检测到不可能存在共享数据竞争的锁进行消除，判定依据来源于逃逸分析的数据支持。</p>
+<p>如果一段代码中，堆上的所有数据都不会逃逸出去被其他线程访问，那么就可以把他们当做栈上数据，同步加锁也就无需进行。</p>
+<h2 id="锁粗化"><a href="#锁粗化" class="headerlink" title="锁粗化"></a>锁粗化</h2><p>如果一系列操作都是对一个对象反复加锁解锁，例如在循环体中进行加锁解锁操作，会导致不必要的性能损耗。</p>
+<p>如果虚拟机检测到这种情况，会将加锁同步的范围扩展（粗化）到整个操作序列的外部。</p>
+<h2 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h2><p>HotSpot虚拟机的对象头分为两部分信息，第一部分用于存储对象自身的运行时数据，如哈希码，GC分带年龄等，这部分数据是实现轻量级锁和偏向锁的关键，官方称他们为Mark Word。另一部分用于存储指向方法区对象类型数据的指针。</p>
+<p>Mark Word会根据对象的状态复用自己的存储空间，存储内容如下所示：</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E4%B8%8E%E9%94%81%E4%BC%98%E5%8C%96_1.png" alt=""></p>
+<p>在代码进入同步块的时候，如果同步对象没有被锁定（锁标志位为01状态），虚拟机将会首先在当前线程的栈帧中建立一个名为锁记录的空间，用于存储锁对象目前的Mark Word的拷贝.</p>
+<p>然后，虚拟机将使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针。</p>
+<p>如果成功，那么这个线程就拥有了这个对象的锁，并且对象的Mark Word的锁标志位将转变为00，标示此对象处于轻量级锁定状态。</p>
+<p>如果失败了，虚拟机首先会检查对象的Mark Word是否指向当前线程的栈帧，如果只说明当前线程已经拥有了这个对象的锁，那就可以直接进入同步块继续执行，否则说明这个锁对象已经被其他线程抢占了。如果两条以上的线程争用同一个锁，那轻量级锁就不再有效，要膨胀为重量级锁，锁的标志变为10，Mark Word中存储的就是指向重量级锁的指针，后面等待锁的线程也要进入阻塞状态。</p>
+<p>轻量级锁能提升程序同步性能的依据是对于绝大部分的锁，在整个同步周期内都是不存在竞争的。如果没有竞争，轻量级锁使用CAS操作避免了使用互斥量的开销，但是如果存在锁竞争，除了互斥量的开销外，还额外发生了CAS操作。</p>
+<p>因此在有竞争的情况下， 轻量级锁比传统的重量级锁更慢。</p>
+<h2 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h2><p>偏向锁的目的是消除数据在无竞争情况下的同步原语。</p>
+<p>如果说轻量级锁是在无竞争条件下使用CAS操作去消除同步使用的互斥量，那偏向锁就是在无竞争的情况下把整个同步都消除掉，而且连CAS都不需要做。</p>
+<p>偏向锁中的锁偏向于第一个获得他的线程，如果在接下来的执行过程中，该锁没有被其他的线程获取，则持有偏向锁的线程将永远不需要同步。</p>
+<p>假设当前虚拟机启用了偏向锁，那么当锁对象第一次被线程获取的时候，虚拟机将对象头中的标志位设置为01，即偏向模式。同时使用CAS操作吧获取到这个锁的线程的ID记录在对象的Mark Word之中，如果CAS操作成功，持有偏向锁的线程以后每次进入到这个锁相关的同步块的时候都不需要同步。当有另外一个线程尝试去获取这个锁时，偏向模式就宣告结束。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/Java自动内存管理机制/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/18/Java自动内存管理机制/" itemprop="url">Java自动内存管理机制</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-18T21:58:01+08:00">
+                2018-12-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/深入理解Java虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">深入理解Java虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="运行时数据区域"><a href="#运行时数据区域" class="headerlink" title="运行时数据区域"></a>运行时数据区域</h2><h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>程序计数器是一块比较小的内存空间。他可以看做是当前线程所执行的字节码的行号指示器，字节码解释器工作时就是通过改变这个计数器的值来选取吓一跳需要执行的字节码指令。</p>
+<p>由于一个处理器只会处理一条线程中的指令，所以每个线程都需要一个独立的程序计数器。</p>
+<h3 id="Java虚拟机栈"><a href="#Java虚拟机栈" class="headerlink" title="Java虚拟机栈"></a>Java虚拟机栈</h3><p>Java虚拟机栈也是线程私有的，生命周期与线程相同。</p>
+<p>Java方法在执行的同事都会创建一个栈帧用于存储局部变量表，操作数栈，动态链接，方法出口等信息。每一个方法从调用到执行完成的过程，就对应着一个栈帧在虚拟机栈中入栈到出栈的过程。</p>
+<p>局部变量表存放了编译器可知的各种基本数据类型以及对象引用和returnAddress类型。</p>
+<p>long和double占用两个Slot单位，在方法运行期间不会改变局部变量表的大小。</p>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>本地方法栈为Native方法服务，具体的虚拟机可以自由的实现它。</p>
+<h3 id="Java堆"><a href="#Java堆" class="headerlink" title="Java堆"></a>Java堆</h3><p>堆是Java虚拟机所管理的内存中最大的一块，是被所有县城共享的一块内存区域，几乎所有的对象都在堆上面分配内存。</p>
+<p>堆是垃圾收集器管理的主要区域，可分为新生代和老年代。</p>
+<p>堆可以处于物理上不连续的内存空间，只要逻辑连续即可。</p>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>方法区和堆一样都是各个线程共享的内存区域，存储被虚拟机加在的类信息，常量，静态变量，即时编译器编译后的代码等数据。</p>
+<p>Java虚拟机规范对方法区的限制比较宽松，除了和Java堆一样可以不需要连续的内存和可以选择固定大小或者可以扩展外，还可以选择不实现垃圾收集。</p>
+<h3 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h3><p>运行时常量池是方法区的一部分，用于存放编译期生成的各种字面量和符号引用。</p>
+<h2 id="虚拟机对象探秘"><a href="#虚拟机对象探秘" class="headerlink" title="虚拟机对象探秘"></a>虚拟机对象探秘</h2><h3 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h3><ol>
+<li>虚拟机遇到一个new指令时，首先去检查这个指令的参数能否在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已经被加载解析和初始化过，否者要执行响应的类加载过程</li>
+<li>为新生对象分配内存。即在堆中划分出一块确定大小的内存</li>
+<li>将分配到的内存空间初始化为零（不包括对象头）</li>
+<li>对对象进行必要的设置，例如放在对象头中的类的元数据，对象的哈希码，对象个GC分带年龄等信息</li>
+<li>执行<init>方法</init></li>
+</ol>
+<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><p>对象在内存中的布局可以分为3块区域：对象头，实例数据，对齐填充。</p>
+<p>对象头包括两部分信息：</p>
+<ol>
+<li><p>存储对象自身的运行时数据，如哈希码，GC分带年龄，锁状态标识，线程持有的锁，偏向线程ID，偏向时间戳等</p>
+</li>
+<li><p>类型指针。即对象指向它的类元素的指针，虚拟机通过这个指针来确定这个对象是哪儿个类的实例</p>
+</li>
+<li><p>如果对象是数组的话，那么在对象头中记录着数组长度</p>
+</li>
+</ol>
+<p>实例数据是对象真正存储的有效信息，也是在程序代码中所定义的各种类型的字段内容，无论是继承的还是子类中定义的。默认情况下相同宽度的字段会分配到一起。</p>
+<p>对齐填充只是要求对象的大小是8字节的整数倍，当对象实例数据没有对齐时，需要对齐填充来补全。</p>
+<h3 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h3><p>目前主流的对象访问方式有使用句柄和直接指针两种。</p>
+<ul>
+<li><p>如果使用句柄，那么在堆中会划分出一块内存作为句柄池，reference中存储的就是对象的句柄地址，而句柄中包含了对象实例数据与类型数据各自的具体地址信息。<br><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_1.png" alt=""></p>
+</li>
+<li><p>如果使用直接指针访问，那么堆对象的布局就要考虑如何放置访问类型数据的相关信息，而reference中存储的直接就是对象地址。<br><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_2.png" alt=""></p>
+</li>
+</ul>
+<p>使用句柄好处是拥有稳定的句柄地址，在对象被移动时只改变句柄中的实例数据指针，而reference本身不需要修改。</p>
+<p>使用直接指针访问方式的最大好处就是速度更快，节省了一次指针定位的时间开销。</p>
+<h2 id="垃圾收集器与内存分配策略"><a href="#垃圾收集器与内存分配策略" class="headerlink" title="垃圾收集器与内存分配策略"></a>垃圾收集器与内存分配策略</h2><h3 id="对象已死"><a href="#对象已死" class="headerlink" title="对象已死"></a>对象已死</h3><h4 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h4><p>为对象添加一个引用计数器，当一个地方引用它时计数器加一，当引用失效时，计数器减一。</p>
+<p>引用计数法判定效率高但是无法解决相互循环引用的问题。</p>
+<h4 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h4><p>这个算法的基本思路就是通过一系列的称为GC Roots的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链，当一个对象到一个GC Roots没有任何引用链相连，则认为此对象是不可用的。</p>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><p>在JDK 1.2 之后，Java扩充了引用的概念。</p>
+<ul>
+<li><p>强引用：普遍存在的引用，只要强引用还存在，垃圾回收期永远不会回收掉被引用的对象</p>
+</li>
+<li><p>软引用：描述一些有用但是非必须的对象。软引用引用的对象在将要发生内存溢出异常之前，将会把这些对象列入回收范围进行二次回收。如果这次回收仍然没有足够的内存，那么将会抛出内存溢出异常</p>
+</li>
+<li><p>弱引用：弱引用引用的对象只能生存到下一次垃圾收集之前</p>
+</li>
+<li><p>虚引用：一个对象是否有虚引用的存在，完全不会对其生存时间构成影响，也无法通过虚引用获得一个对象实例。虚引用的唯一作用就是在这个对象被收集器回收时收到一个系统通知</p>
+</li>
+</ul>
+<h3 id="生存还是死亡"><a href="#生存还是死亡" class="headerlink" title="生存还是死亡"></a>生存还是死亡</h3><p>如果一个对象在进行可达性分析后发现没有与GC Roots相连接的引用链，那么他会被第一次标记并且进行一次筛选，筛选的条件是此对象是否有必要执行finalize()方法。如果对象没有覆盖finalize()方法，或者finalize()方法已经被调用过，虚拟机将这两种情况视为没必要执行。</p>
+<p>如果这个对象被判定为有必要执行finalize()方法，那么这个对象将会被放置在一个叫做F-Queue的队列中，并且在稍后由一个由虚拟机自动建立的，低优先级的Finalizer线程去执行。finalize()方法是对象逃脱死亡的最后一次机会。</p>
+<p>任何一个对象的finalize()方法只会被系统调用一次，如果对象面临下一次回收，他的finalize()方法将不会被执行。</p>
+<h3 id="回收方法区"><a href="#回收方法区" class="headerlink" title="回收方法区"></a>回收方法区</h3><p>永久带的垃圾回收主要是回收废弃常量和无用类。</p>
+<ol>
+<li>废弃常量：比如一个字符串在常量池但是当前系统中没有一个对象引用此字符串</li>
+<li><p>无用类：</p>
+<ul>
+<li>该类所有实例被回收</li>
+<li>加载该类的ClassLoader已经被回收</li>
+<li>该类对应的Class对象没有任何地方被引用，无法再任何地方通过反射访问该类的方法</li>
+</ul>
+</li>
+</ol>
+<h2 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h2><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p>算法先标记所有需要回收的对象，在标记完成后统一回收所有被标记的对象。</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_3.png" alt=""><br>缺点：</p>
+<ul>
+<li><p>标记和清除两个过程效率都不高</p>
+</li>
+<li><p>标记清除之后会产生大量不连续的内存碎片</p>
+</li>
+</ul>
+<h3 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h3><p>将内存按照容量划分为大小相等的两块，每次只使用其中的一块。当这一块用光了，那就将还存活着的对象复制到另外一块上面，然后将已经使用过的内存空间一次清理掉。</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_4.png" alt=""></p>
+<p>缺点：使可用内存减少</p>
+<p>现在商业虚拟机使用这种方法回收新生代，将内存分为较大的Eden和两块较小的Survivor空间，每次使用Eden和其中一块Surivor。</p>
+<p>回收时将Eden和Survivor中还存活的对象一次性的复制到另一块Survivor空间上，然后清理掉Eden和刚才使用过的Survivor空间。默认Eden和Survivor的大小比例是8：1。</p>
+<p>如果当Surivivor空间不够用时，需要依赖其他内存（老年代）进行分配担保。</p>
+<h3 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h3><p>过程与标记-清除算法一样，但是后续步骤将所有存活对象向一端移动，然后直接清理掉边界以外的内存。</p>
+<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_5.png" alt=""></p>
+<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>根据对象存货周期的不同将内存分为几块，通常将堆分为新生代和老年代。</p>
+<p>新生代每次垃圾收集都有大批对象死去，所以采用复制算法，老年代对象存活率高，所以采用标记-清除或者标记-整理算法。</p>
+<h2 id="HotSpot算法实现"><a href="#HotSpot算法实现" class="headerlink" title="HotSpot算法实现"></a>HotSpot算法实现</h2><h3 id="枚举根节点"><a href="#枚举根节点" class="headerlink" title="枚举根节点"></a>枚举根节点</h3><p>GC Roots的节点主要体现在全局性的引用和执行上下文中，如果要执行检查其中的引用必然要耗费大量时间，而且枚举根节点必然要发生GC停顿。</p>
+<p>在虚拟机中使用叫OopMap的数据结构得知哪儿些地方存放着对象引用。</p>
+<h3 id="安全点"><a href="#安全点" class="headerlink" title="安全点"></a>安全点</h3><p>在虚拟机中只有在特定的位置记录了OopMap信息，这些位置称为安全点。</p>
+<p>只有在安全点才能停顿下来进行GC。</p>
+<p>使GC发生时所有县城跑到最近的安全点并且停顿下来有两种方法：</p>
+<ul>
+<li>抢先式中断：在GC时，首先把所有线程全部中断，如果发现有线程中断不在安全点上，就恢复线程，让他跑到安全点上。</li>
+<li>主动式中断：设置一个标志，让各个线程去轮训这个标志，发现中断标志为真就让自己中断挂起。</li>
+</ul>
+<h3 id="安全区域"><a href="#安全区域" class="headerlink" title="安全区域"></a>安全区域</h3><p>安全区域是指在一端代码片段中，引用关系不会发生变化。在这个区域中任意地方GC都是安全的。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/程序编译与代码优化之运行期/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1280,705 +2157,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/06/wait-notify机制/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dawn">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/06/wait-notify机制/" itemprop="url">wait/notify机制</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-06T17:26:02+08:00">
-                2018-12-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">学习笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="wait-notify机制介绍"><a href="#wait-notify机制介绍" class="headerlink" title="wait/notify机制介绍"></a>wait/notify机制介绍</h1><p>当一个线程A调用了对象o的wait()方法而进入了等待状态,而另一个线程B调用了对象o的notify()/notifyAll()方法,线程A收到通知退出等待队列,进入可执行状态。</p>
-<h2 id="wait-notify机制的用处"><a href="#wait-notify机制的用处" class="headerlink" title="wait/notify机制的用处"></a>wait/notify机制的用处</h2><p>当两个线程存在生产者消费者关系,如果用轮询实现会造成资源的浪费,而wait/notify可以解决这个问题。</p>
-<h2 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h2><ul>
-<li><strong>notify():</strong> 随机唤醒等待队列中等待统一资源的一个线程,此线程会进入可运行状态</li>
-<li><strong>notifyAll():</strong> 使所有等待队列中等待同一共享资源的线程退出等待队列,进入可运行状态</li>
-<li><strong>wait():</strong> 调用该方法的线程释放锁并且从运行状态退出,进入等待队列,直到被唤醒</li>
-<li><strong>wait(long):</strong> 超时等待一段时间,单位是毫秒,若超时没有被唤醒则返回</li>
-<li><strong>wait(long, int):</strong> 单位是纳秒</li>
-</ul>
-<h1 id="wait-notify机制原理"><a href="#wait-notify机制原理" class="headerlink" title="wait/notify机制原理"></a>wait/notify机制原理</h1><h2 id="线程的基本状态"><a href="#线程的基本状态" class="headerlink" title="线程的基本状态"></a>线程的基本状态</h2><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_wait%E3%80%81notify%E6%9C%BA%E5%88%B6_1.png" alt="image"></p>
-<ul>
-<li><strong>新建:</strong> 新创建的线程对象</li>
-<li><strong>可运行:</strong> 线程创建后,其start()方法被调用,位于可运行线程池中,等待获取cpu使用权</li>
-<li><strong>运行:</strong> 可运行状态的线程获取了cpu时间片,执行代码</li>
-<li><p><strong>阻塞:</strong> 线程因为某种原因放弃了cpu使用权,直到线程进入可运行状态</p>
-<ul>
-<li><strong>等待阻塞:</strong> 执行了waitt()方法, JVM将该线程放入等待队列中</li>
-<li><strong>同步阻塞:</strong> 获取对象锁失败, JVM将该线程放入锁池(lock pool)中</li>
-<li><strong>其他阻塞:</strong> 执行了sleep()方法,或者发出了I/O请求, JVM将该线程置为阻塞状态,当sleep()状态超时或者I/O处理完毕线程重新转入可运行状态</li>
-</ul>
-</li>
-<li><p><strong>死亡:</strong> 线程的方法执行结束或者发生异常</p>
-</li>
-</ul>
-<h2 id="wait-notify流程"><a href="#wait-notify流程" class="headerlink" title="wait/notify流程"></a>wait/notify流程</h2><ul>
-<li>线程A获取对象锁并且进入同步代码块执行锁对象的wait()方法(立即释放锁),通知锁监听器,释放锁并且进入等待队列</li>
-<li>线程B获取对象锁并且进入同步代码块执行锁对象的notify/notifyAll方法,告诉锁监听器,通知该对象锁的等待队列 <strong>(执行notify/notifyAll方法并不立即释放锁,只有退出同步代码块才释放对象锁)</strong></li>
-<li>线程A得到锁监听器的通知,移出等待队列变成可运行状态,并且尝试获取锁执行代码</li>
-</ul>
-<h2 id="wait-notify与synchronized"><a href="#wait-notify与synchronized" class="headerlink" title="wait/notify与synchronized"></a>wait/notify与synchronized</h2><p>执行wait/notify必须要加synchronized锁,因为synchronized代码块生成的字节码中包含<strong>monitorenter</strong>与<strong>monitorexit</strong>指令。</p>
-<p>monitorenter指令可以获取对象的monitor,而wait()方法的底层实现依赖于该对象的monitor,即如果在synchronized代码中执行,必定获取到了对象的monitor。</p>
-<h2 id="wait-notify与cpu资源"><a href="#wait-notify与cpu资源" class="headerlink" title="wait/notify与cpu资源"></a>wait/notify与cpu资源</h2><p>wait/nofity是通过JVM里的<strong>park/unpark</strong>机制来实现的,在Linux下这种机制又是通过<br><strong>pthread_cond_wait/pthread_cond_signal</strong> 来实现的，因此当线程进入到wait状态的时候其实是会放弃cpu的，也就是说这类线程是不会占用cpu资源。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/06/非对称加密以及RSA加密/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dawn">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/06/非对称加密以及RSA加密/" itemprop="url">非对称加密以及RSA加密</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-06T01:36:37+08:00">
-                2018-12-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">学习笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="非对称加密"><a href="#非对称加密" class="headerlink" title="非对称加密"></a>非对称加密</h1><p>非对称加密需要一对密钥,即公钥和私钥。如果使用公钥加密,则只能用对应私钥才能解密;而如果使用私钥加密,则只能使用对应公钥才能解密。</p>
-<p>非对称加密主要是为了解决对称加密的<strong>密钥传输</strong>与<strong>密钥管理</strong>问题。</p>
-<h2 id="非对称加密的工作方式"><a href="#非对称加密的工作方式" class="headerlink" title="非对称加密的工作方式"></a>非对称加密的工作方式</h2><p>客户端向服务端发送数据流程:</p>
-<ul>
-<li>服务端生成公钥和私钥</li>
-<li>服务端发送公钥给客户端</li>
-<li>客户端通过公钥加密数据</li>
-<li>客户端发送密文给服务端</li>
-<li>服务端通过私钥解密密文</li>
-</ul>
-<p>公钥和私钥都可以用来加密数据。</p>
-<h2 id="非对称加密的优点"><a href="#非对称加密的优点" class="headerlink" title="非对称加密的优点"></a>非对称加密的优点</h2><ul>
-<li>解决密钥传输问题</li>
-<li>解决密钥管理问题</li>
-</ul>
-<h2 id="非对称加密的缺点"><a href="#非对称加密的缺点" class="headerlink" title="非对称加密的缺点"></a>非对称加密的缺点</h2><ul>
-<li>运算量大</li>
-<li>速度慢</li>
-<li>适合少量数据加密长</li>
-</ul>
-<h1 id="RSA算法"><a href="#RSA算法" class="headerlink" title="RSA算法"></a>RSA算法</h1><p>RSA是非对称加密算法的一种,为了保证加密的安全性,RSA密钥的长度一般都是1024位或者2048位,使得RSA加密的计算量大、速度慢。</p>
-<h2 id="RSA加密原理"><a href="#RSA加密原理" class="headerlink" title="RSA加密原理"></a>RSA加密原理</h2><p><a href="http://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html" target="_blank" rel="noopener">RSA加密原理(一)</a></p>
-<p><a href="http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html" target="_blank" rel="noopener">RSA加密原理(二)</a></p>
-<h2 id="RSA注意事项"><a href="#RSA注意事项" class="headerlink" title="RSA注意事项"></a>RSA注意事项</h2><p>实际开发中,一般采用RSA+ASE相结合的方式。即使用AES加密数据,使用RSA加密AES的密钥。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/对称加密以及AES加密/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dawn">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/05/对称加密以及AES加密/" itemprop="url">对称加密以及AES加密</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-05T19:37:19+08:00">
-                2018-12-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">学习笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h1><p>对称加密就是加密和解密使用同一个密钥的加密算法。</p>
-<h2 id="对称加密的工作方式"><a href="#对称加密的工作方式" class="headerlink" title="对称加密的工作方式"></a>对称加密的工作方式</h2><ul>
-<li>使用密钥加密明文数据</li>
-<li>发送密文</li>
-<li>收到密文</li>
-<li>使用同一套密钥解密密文</li>
-</ul>
-<h2 id="对称加密的优点"><a href="#对称加密的优点" class="headerlink" title="对称加密的优点"></a>对称加密的优点</h2><ul>
-<li>计算量小</li>
-<li>速度快</li>
-<li>适合大量数据加密</li>
-</ul>
-<h2 id="对称加密的缺点"><a href="#对称加密的缺点" class="headerlink" title="对称加密的缺点"></a>对称加密的缺点</h2><h3 id="密钥传输问题"><a href="#密钥传输问题" class="headerlink" title="密钥传输问题"></a>密钥传输问题</h3><p>由于对称加密使用同一个密钥,所以算法的安全性不仅仅取决于加密算法,更取决于密钥能否安全保管。</p>
-<p>实际开发通常是客户端向服务端请求对称加密的密钥,密钥通过非对称加密后再传输。</p>
-<h3 id="密钥管理问题"><a href="#密钥管理问题" class="headerlink" title="密钥管理问题"></a>密钥管理问题</h3><p>随着用户的增多,密钥的数量也随着膨胀。</p>
-<h1 id="AES加密"><a href="#AES加密" class="headerlink" title="AES加密"></a>AES加密</h1><p>AES(Advanced Encryption Standard)是用来替代之前的DES加密算法而出现的。</p>
-<p>AES加密算法使用分组密码体制,每个分组数据的长度为128位16个字节,密钥长度可以是128位16个字节、192位或者256位,一共有四种加密模式,我们通常采用需要初始向量IV的CBC模式,初始向量的长度为128位16个字节。</p>
-<h2 id="AES的加密原理"><a href="#AES的加密原理" class="headerlink" title="AES的加密原理"></a>AES的加密原理</h2><h3 id="分组密码体制"><a href="#分组密码体制" class="headerlink" title="分组密码体制"></a>分组密码体制</h3><p>AES采用分组密码体制,将明文分段,每段长度为128位16字节。如果长度不够16字节,则要通过Padding将数据填满16字节,然后分别的每段数据加密,最后拼接成为密文。</p>
-<h3 id="Padding"><a href="#Padding" class="headerlink" title="Padding"></a>Padding</h3><p>Padding用来填充不满16字节的分组数据,有三种不同的填充模式。</p>
-<ul>
-<li><strong>PKCS5</strong>: 缺少n的字节,就在末尾填充n字节的n</li>
-<li><strong>PKCS7</strong>: 末尾填充0</li>
-<li><strong>NOPADDING</strong>: 发送方保证不需要填充</li>
-</ul>
-<p>解密需要使用和加密端相同的Padding,通常采用PKCS7 Padding。</p>
-<h3 id="初始向量IV"><a href="#初始向量IV" class="headerlink" title="初始向量IV"></a>初始向量IV</h3><p>初始向量是为了使加密更加安全可靠,长度规定为128位16字节,初始向量来源为随机生成。</p>
-<h3 id="密钥"><a href="#密钥" class="headerlink" title="密钥"></a>密钥</h3><p>密钥的长度可以为128位16字节、192位或者256位,位数越高强度越大,但是效率更低。</p>
-<p>通常采用128位16字节的密钥,密钥来源为随机生成。</p>
-<h3 id="四种加密模式"><a href="#四种加密模式" class="headerlink" title="四种加密模式"></a>四种加密模式</h3><p>四种加密模式分别为ECB(电子密码本模式)、CBC(密码分组链接模式)、CFB以及OFB模式。</p>
-<h2 id="AES的加密流程"><a href="#AES的加密流程" class="headerlink" title="AES的加密流程"></a>AES的加密流程</h2><h3 id="ECB-电子密码本模式"><a href="#ECB-电子密码本模式" class="headerlink" title="ECB(电子密码本模式)"></a>ECB(电子密码本模式)</h3><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E4%BB%A5%E5%8F%8AAES%E5%8A%A0%E5%AF%86_1.png.png" alt="image"></p>
-<p>ECB是最基本的加密模式,相同的明文块会被加密成相同的密文块,更容易破解,不安全,因为很少使用。</p>
-<h3 id="CBC-密码分组链接模式"><a href="#CBC-密码分组链接模式" class="headerlink" title="CBC(密码分组链接模式)"></a>CBC(密码分组链接模式)</h3><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E4%BB%A5%E5%8F%8AAES%E5%8A%A0%E5%AF%86_2.png" alt="image"></p>
-<ul>
-<li>AES将明文按128位16字节分割,如果最后一块不够则通过Padding填充</li>
-<li>然后将明文块0与初始向量IV进行异或操作,再用密钥加密,得到密文块0,同时密文块0作为明文块1的加密向量</li>
-<li>然后明文块1与密文块0进行异或,再用密钥加密得到密文块1</li>
-<li>最后将所有密文块拼接得到密文</li>
-</ul>
-<h2 id="AES的注意事项"><a href="#AES的注意事项" class="headerlink" title="AES的注意事项"></a>AES的注意事项</h2><ul>
-<li>服务端与客户端使用相同的<strong>密钥</strong></li>
-<li>服务端与客户端使用相同的<strong>初始向量IV</strong></li>
-<li>服务端与客户端使用相同的<strong>加密模式</strong> </li>
-<li>服务端与客户端使用相同的<strong>Padding</strong></li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/05/Hash算法以及MD5/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dawn">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/05/Hash算法以及MD5/" itemprop="url">Hash算法以及MD5</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-05T18:32:37+08:00">
-                2018-12-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">学习笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>MD5(Message Digest Algorithm MD5)是一种Hash算法,严格来说并不是一种加密算法,但是可以达到加密的效果。</p>
-<h1 id="MD5算法的优点"><a href="#MD5算法的优点" class="headerlink" title="MD5算法的优点"></a>MD5算法的优点</h1><h2 id="容易计算以及不可逆"><a href="#容易计算以及不可逆" class="headerlink" title="容易计算以及不可逆"></a>容易计算以及不可逆</h2><ul>
-<li>主流编程语言基本都支持MD5算法的实现</li>
-<li>MD5是一个不可逆的算法,无法通过MD5值逆推原文</li>
-</ul>
-<h2 id="压缩性"><a href="#压缩性" class="headerlink" title="压缩性"></a>压缩性</h2><ul>
-<li>任意长度的数据的MD5值都是一个32位长度的十六进制字符串,区分大小写</li>
-</ul>
-<h2 id="抗修改性"><a href="#抗修改性" class="headerlink" title="抗修改性"></a>抗修改性</h2><ul>
-<li>原文即便是微小的修改,MD5也会有巨大的变动</li>
-</ul>
-<h2 id="抗碰撞性"><a href="#抗碰撞性" class="headerlink" title="抗碰撞性"></a>抗碰撞性</h2><ul>
-<li>MD5共有2的128次方种可能性,实际中找到两个相同的MD5值是非常困难的</li>
-</ul>
-<h1 id="MD5算法的缺点"><a href="#MD5算法的缺点" class="headerlink" title="MD5算法的缺点"></a>MD5算法的缺点</h1><ul>
-<li>安全性</li>
-</ul>
-<h1 id="MD5算法的场景"><a href="#MD5算法的场景" class="headerlink" title="MD5算法的场景"></a>MD5算法的场景</h1><h2 id="用户信息存储"><a href="#用户信息存储" class="headerlink" title="用户信息存储"></a>用户信息存储</h2><h3 id="数据加密"><a href="#数据加密" class="headerlink" title="数据加密"></a>数据加密</h3><p>为了预防数据库泄露带来的严重后果,数据库中不应存放用户私密数据的明文。</p>
-<h3 id="MD5的弊端-彩虹表"><a href="#MD5的弊端-彩虹表" class="headerlink" title="MD5的弊端(彩虹表)"></a>MD5的弊端(彩虹表)</h3><p>彩虹表是一个庞大的数据库,存放着常用的密码以及对应的MD5、SHA-X等Hash值，如果密码较为简单就有可能被彩虹表破译掉。</p>
-<h3 id="正确的加密方法-salt"><a href="#正确的加密方法-salt" class="headerlink" title="正确的加密方法(salt)"></a>正确的加密方法(salt)</h3><p>加盐:在密码的任意位置插入一些特殊的字符串(salt)的过程。</p>
-<p>加盐是为了增强密码的复杂性,从而降低了密码被彩虹表破译的概率。</p>
-<p>加盐的要求:</p>
-<ul>
-<li>每个用户的salt最好具有唯一性</li>
-<li>salt最好由服务器为每个用户随机生成</li>
-<li>撒盐的方法最好复杂一点</li>
-</ul>
-<h3 id="实际开发流程"><a href="#实际开发流程" class="headerlink" title="实际开发流程"></a>实际开发流程</h3><p>服务端进行加盐操作:</p>
-<ul>
-<li>客户端对password进行MD5</li>
-<li>通过接口传递加密后的数据</li>
-<li>服务端MD5(客户端传递的加密数据 + salt)</li>
-<li>服务端保存数据</li>
-</ul>
-<h2 id="生成数字签名"><a href="#生成数字签名" class="headerlink" title="生成数字签名"></a>生成数字签名</h2><p>微信支付通过MD5生成数字签名</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2029,7 +2207,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
