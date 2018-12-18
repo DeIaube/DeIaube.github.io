@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="类加载的过程详细讲解一下类加载的过程，也就是加载，验证，准备，解析和初始化这5个阶段所执行的具体动作。 ##加载 加载阶段，虚拟机要完成三件事：  通过一个类的全限定名来获取定义此类的二进制字节流。 讲这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。 在内存生成一个代表这个类的Class对象，作为方法区这个类的各种数据的访问入口。  其中二进制字节流可以从ZIP包中获取，从网络获取，运">
+<meta name="description" content="类加载的过程详细讲解一下类加载的过程，也就是加载，验证，准备，解析和初始化这5个阶段所执行的具体动作。 加载加载阶段，虚拟机要完成三件事：  通过一个类的全限定名来获取定义此类的二进制字节流。 讲这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。 在内存生成一个代表这个类的Class对象，作为方法区这个类的各种数据的访问入口。  其中二进制字节流可以从ZIP包中获取，从网络获取，运行时计">
 <meta name="keywords" content="Java,jvm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深入理解Java类加载">
 <meta property="og:url" content="http://yoursite.com/2018/12/18/深入理解Java类加载/index.html">
 <meta property="og:site_name" content="Dawn">
-<meta property="og:description" content="类加载的过程详细讲解一下类加载的过程，也就是加载，验证，准备，解析和初始化这5个阶段所执行的具体动作。 ##加载 加载阶段，虚拟机要完成三件事：  通过一个类的全限定名来获取定义此类的二进制字节流。 讲这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。 在内存生成一个代表这个类的Class对象，作为方法区这个类的各种数据的访问入口。  其中二进制字节流可以从ZIP包中获取，从网络获取，运">
+<meta property="og:description" content="类加载的过程详细讲解一下类加载的过程，也就是加载，验证，准备，解析和初始化这5个阶段所执行的具体动作。 加载加载阶段，虚拟机要完成三件事：  通过一个类的全限定名来获取定义此类的二进制字节流。 讲这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。 在内存生成一个代表这个类的Class对象，作为方法区这个类的各种数据的访问入口。  其中二进制字节流可以从ZIP包中获取，从网络获取，运行时计">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://pj8vo9ptw.bkt.clouddn.com/img_%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E7%B1%BB%E5%8A%A0%E8%BD%BD_1.png">
-<meta property="og:updated_time" content="2018-12-18T15:20:03.300Z">
+<meta property="og:updated_time" content="2018-12-18T15:20:58.167Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入理解Java类加载">
-<meta name="twitter:description" content="类加载的过程详细讲解一下类加载的过程，也就是加载，验证，准备，解析和初始化这5个阶段所执行的具体动作。 ##加载 加载阶段，虚拟机要完成三件事：  通过一个类的全限定名来获取定义此类的二进制字节流。 讲这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。 在内存生成一个代表这个类的Class对象，作为方法区这个类的各种数据的访问入口。  其中二进制字节流可以从ZIP包中获取，从网络获取，运">
+<meta name="twitter:description" content="类加载的过程详细讲解一下类加载的过程，也就是加载，验证，准备，解析和初始化这5个阶段所执行的具体动作。 加载加载阶段，虚拟机要完成三件事：  通过一个类的全限定名来获取定义此类的二进制字节流。 讲这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。 在内存生成一个代表这个类的Class对象，作为方法区这个类的各种数据的访问入口。  其中二进制字节流可以从ZIP包中获取，从网络获取，运行时计">
 <meta name="twitter:image" content="http://pj8vo9ptw.bkt.clouddn.com/img_%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E7%B1%BB%E5%8A%A0%E8%BD%BD_1.png">
 
 
@@ -345,8 +345,7 @@
 
       
         <h1 id="类加载的过程"><a href="#类加载的过程" class="headerlink" title="类加载的过程"></a>类加载的过程</h1><p>详细讲解一下类加载的过程，也就是加载，验证，准备，解析和初始化这5个阶段所执行的具体动作。</p>
-<p>##加载</p>
-<p>加载阶段，虚拟机要完成三件事：</p>
+<h2 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h2><p>加载阶段，虚拟机要完成三件事：</p>
 <ol>
 <li>通过一个类的全限定名来获取定义此类的二进制字节流。</li>
 <li>讲这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。</li>
@@ -616,7 +615,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#类加载的过程"><span class="nav-number">1.</span> <span class="nav-text">类加载的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#验证"><span class="nav-number">1.1.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备"><span class="nav-number">1.2.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解析"><span class="nav-number">1.3.</span> <span class="nav-text">解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类或接口的解析"><span class="nav-number">1.3.1.</span> <span class="nav-text">类或接口的解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字段解析"><span class="nav-number">1.3.2.</span> <span class="nav-text">字段解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类方法解析"><span class="nav-number">1.3.3.</span> <span class="nav-text">类方法解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接口方法解析"><span class="nav-number">1.3.4.</span> <span class="nav-text">接口方法解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化"><span class="nav-number">1.4.</span> <span class="nav-text">初始化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类加载器"><span class="nav-number">2.</span> <span class="nav-text">类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#类与类加载器"><span class="nav-number">2.1.</span> <span class="nav-text">类与类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双亲委派模型"><span class="nav-number">2.2.</span> <span class="nav-text">双亲委派模型</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#类加载的过程"><span class="nav-number">1.</span> <span class="nav-text">类加载的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#加载"><span class="nav-number">1.1.</span> <span class="nav-text">加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#验证"><span class="nav-number">1.2.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备"><span class="nav-number">1.3.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解析"><span class="nav-number">1.4.</span> <span class="nav-text">解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类或接口的解析"><span class="nav-number">1.4.1.</span> <span class="nav-text">类或接口的解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字段解析"><span class="nav-number">1.4.2.</span> <span class="nav-text">字段解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类方法解析"><span class="nav-number">1.4.3.</span> <span class="nav-text">类方法解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接口方法解析"><span class="nav-number">1.4.4.</span> <span class="nav-text">接口方法解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化"><span class="nav-number">1.5.</span> <span class="nav-text">初始化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类加载器"><span class="nav-number">2.</span> <span class="nav-text">类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#类与类加载器"><span class="nav-number">2.1.</span> <span class="nav-text">类与类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双亲委派模型"><span class="nav-number">2.2.</span> <span class="nav-text">双亲委派模型</span></a></li></ol></li></ol></div>
             
 
           </div>
