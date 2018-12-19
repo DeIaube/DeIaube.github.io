@@ -249,6 +249,167 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/19/SharedPreferences详解/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/19/SharedPreferences详解/" itemprop="url">SharedPreferences详解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-19T23:26:32+08:00">
+                2018-12-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="SP的初始化"><a href="#SP的初始化" class="headerlink" title="SP的初始化"></a>SP的初始化</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// app中获取SP对象 </span><br><span class="line">// 实际调用的是ContextWrapper的getSharedPreferences()方法</span><br><span class="line">SharedPreferences sharedPreferences = getSharedPreferences(&quot;&quot;, Context.MODE_PRIVATE);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// ContextWrapper</span><br><span class="line">// 这里的mBase是ContextImpl,实际上调用的是ContextImpl的getSharedPreferences()方法</span><br><span class="line">SharedPreferences getSharedPreferences(String name, int mode) &#123;</span><br><span class="line">        return mBase.getSharedPreferences(name, mode);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">// ContextImpl</span><br><span class="line">// 在这里获取SP,首先从缓存中获取,否则实例化新的SharedPreferencesImpl</span><br><span class="line">// 如果Mode设置为支持多线程或者版本小于11则要重新从磁盘更新数据</span><br><span class="line">SharedPreferences getSharedPreferences(File file, int mode) &#123;</span><br><span class="line">        SharedPreferencesImpl sp;</span><br><span class="line">        synchronized (ContextImpl.class) &#123;</span><br><span class="line">            // 获取缓存</span><br><span class="line">            final ArrayMap&lt;File, SharedPreferencesImpl&gt; cache = getSharedPreferencesCacheLocked();</span><br><span class="line">            // 从缓存中获取sp</span><br><span class="line">            sp = cache.get(file);</span><br><span class="line">            if (sp == null) &#123;</span><br><span class="line">                checkMode(mode);</span><br><span class="line">                if (getApplicationInfo().targetSdkVersion &gt;= android.os.Build.VERSION_CODES.O) &#123;</span><br><span class="line">                    if (isCredentialProtectedStorage()</span><br><span class="line">                            &amp;&amp; !getSystemService(UserManager.class)</span><br><span class="line">                                    .isUserUnlockingOrUnlocked(UserHandle.myUserId())) &#123;</span><br><span class="line">                        throw new IllegalStateException(&quot;SharedPreferences in credential encrypted &quot;</span><br><span class="line">                                + &quot;storage are not available until after user is unlocked&quot;);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                // 创建sp实体</span><br><span class="line">                sp = new SharedPreferencesImpl(file, mode);</span><br><span class="line">                cache.put(file, sp);</span><br><span class="line">                return sp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        // 如果当前Mode设置为支持多线程或者版本小于11则要重新从磁盘更新数据</span><br><span class="line">        if ((mode &amp; Context.MODE_MULTI_PROCESS) != 0 ||</span><br><span class="line">            getApplicationInfo().targetSdkVersion &lt; android.os.Build.VERSION_CODES.HONEYCOMB) &#123;</span><br><span class="line">            sp.startReloadIfChangedUnexpectedly();</span><br><span class="line">        &#125;</span><br><span class="line">        return sp;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// SP的构造方法 调用了startLoadFromDisk()加载磁盘中的数据</span><br><span class="line">SharedPreferencesImpl(File file, int mode) &#123;</span><br><span class="line">        mFile = file;</span><br><span class="line">        mBackupFile = makeBackupFile(file);</span><br><span class="line">        mMode = mode;</span><br><span class="line">        mLoaded = false;</span><br><span class="line">        mMap = null;</span><br><span class="line">        mThrowable = null;</span><br><span class="line">        startLoadFromDisk();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 注意这里的锁</span><br><span class="line">// 然后在子线程去读取磁盘数据 其中数据是已XML键值对的形式存储的</span><br><span class="line">// 至此 SP初始化完毕</span><br><span class="line">startLoadFromDisk() &#123;</span><br><span class="line">        synchronized (mLock) &#123;</span><br><span class="line">            // 记住这个变量</span><br><span class="line">            mLoaded = false;</span><br><span class="line">        &#125;</span><br><span class="line">        new Thread(&quot;SharedPreferencesImpl-load&quot;) &#123;</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                loadFromDisk();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.start();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="数据存储"><a href="#数据存储" class="headerlink" title="数据存储"></a>数据存储</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 首先获取Editor</span><br><span class="line">Editor edit() &#123;</span><br><span class="line">        synchronized (mLock) &#123;</span><br><span class="line">            // 等待SP初始化完成</span><br><span class="line">            awaitLoadedLocked();</span><br><span class="line">        &#125;</span><br><span class="line">        return new EditorImpl();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 判断mLoaded的状态,如果当前SP未初始化完成则一直阻塞</span><br><span class="line">void awaitLoadedLocked() &#123;</span><br><span class="line">        if (!mLoaded) &#123;</span><br><span class="line">            BlockGuard.getThreadPolicy().onReadFromDisk();</span><br><span class="line">        &#125;</span><br><span class="line">        // 阻塞当前线程以等待SP的初始化</span><br><span class="line">        // startLoadFromDisk()方法中设为false 直到SP初始化完成为true</span><br><span class="line">        while (!mLoaded) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                mLock.wait();</span><br><span class="line">            &#125; catch (InterruptedException unused) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (mThrowable != null) &#123;</span><br><span class="line">            throw new IllegalStateException(mThrowable);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 以putString为例,对象都暂存在一个Map中</span><br><span class="line">Editor putString(String key, @Nullable String value) &#123;</span><br><span class="line">            synchronized (mEditorLock) &#123;</span><br><span class="line">                mModified.put(key, value);</span><br><span class="line">                return this;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 在当前线程将文件改动写入磁盘 容易造成线程阻塞 慎用</span><br><span class="line">boolean commit() &#123;</span><br><span class="line">            MemoryCommitResult mcr = commitToMemory();</span><br><span class="line">            SharedPreferencesImpl.this.enqueueDiskWrite(</span><br><span class="line">                mcr, null /* sync write on this thread okay */);</span><br><span class="line">            try &#123;</span><br><span class="line">                mcr.writtenToDiskLatch.await();</span><br><span class="line">            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line">            notifyListeners(mcr);</span><br><span class="line">            return mcr.writeToDiskResult;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 通过apply()方法提交更改 新建线程将文件改动写入磁盘</span><br><span class="line">void apply() &#123;</span><br><span class="line">            final MemoryCommitResult mcr = commitToMemory();</span><br><span class="line">            final Runnable awaitCommit = new Runnable() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public void run() &#123;</span><br><span class="line">                        try &#123;</span><br><span class="line">                            mcr.writtenToDiskLatch.await();</span><br><span class="line">                        &#125; catch (InterruptedException ignored) &#123;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;;</span><br><span class="line">            QueuedWork.addFinisher(awaitCommit);</span><br><span class="line">            Runnable postWriteRunnable = new Runnable() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public void run() &#123;</span><br><span class="line">                        awaitCommit.run();</span><br><span class="line">                        QueuedWork.removeFinisher(awaitCommit);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;;</span><br><span class="line">            SharedPreferencesImpl.this.enqueueDiskWrite(mcr, postWriteRunnable);</span><br><span class="line">            notifyListeners(mcr);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// 然而值得注意的是在ActivityThread的handlePauseActivity()方法中,有如下逻辑</span><br><span class="line">// 在ActivityThread的handleStopActivity(),handleSleeping(),handleServiceArgs(),handleStopService()方法中也有类似逻辑</span><br><span class="line">void handlePauseActivity(IBinder token, boolean finished, boolean userLeaving,</span><br><span class="line">            int configChanges, PendingTransactionActions pendingActions, String reason) &#123;</span><br><span class="line">        if (r != null) &#123;</span><br><span class="line">            if (r.isPreHoneycomb()) &#123;</span><br><span class="line">                // 等待QueuedWork中的任务执行完毕</span><br><span class="line">                // 这里面是一个单线程的线程池 如果任务过多可能造成阻塞</span><br><span class="line">                QueuedWork.waitToFinish();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="数据获取"><a href="#数据获取" class="headerlink" title="数据获取"></a>数据获取</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 以获取String对象为例</span><br><span class="line">String getString(String key, @Nullable String defValue) &#123;</span><br><span class="line">        synchronized (mLock) &#123;</span><br><span class="line">            // 等待SP初始化完成</span><br><span class="line">            awaitLoadedLocked();</span><br><span class="line">            String v = (String)mMap.get(key);</span><br><span class="line">            return v != null ? v : defValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 判断mLoaded的状态,如果当前SP未初始化完成则一直阻塞</span><br><span class="line">void awaitLoadedLocked() &#123;</span><br><span class="line">        if (!mLoaded) &#123;</span><br><span class="line">            BlockGuard.getThreadPolicy().onReadFromDisk();</span><br><span class="line">        &#125;</span><br><span class="line">        // 阻塞当前线程以等待SP的初始化</span><br><span class="line">        // startLoadFromDisk()方法中设为false 直到SP初始化完成为true</span><br><span class="line">        while (!mLoaded) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                mLock.wait();</span><br><span class="line">            &#125; catch (InterruptedException unused) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (mThrowable != null) &#123;</span><br><span class="line">            throw new IllegalStateException(mThrowable);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li><strong>SP内部使用XML文件实现,推荐存放小数据</strong></li>
+<li><strong>commit()方法不会新建线程提交改动,不推荐使用</strong></li>
+<li><strong>apply()方法虽然会新建线程提交改动,但是提交过多仍然容易造成阻塞</strong></li>
+<li><strong>在SP未初始化完成之前使用可能造成线程阻塞</strong></li>
+<li><strong>SP实现跨进程通信不靠谱</strong></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/深入理解Java类加载/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1247,8 +1408,7 @@
 </ol>
 <h2 id="编译优化技术"><a href="#编译优化技术" class="headerlink" title="编译优化技术"></a>编译优化技术</h2><h3 id="公共子表达式消除"><a href="#公共子表达式消除" class="headerlink" title="公共子表达式消除"></a>公共子表达式消除</h3><p>如果一个表达式E已经计算过了，而且从先前的计算到现在E中所有变量的值都没有发生变化，那么E的这次出现就成为了公共子表达式。对于这种表达式，字需要直接用前面计算过的表达式结果代替E就可以了。</p>
 <h3 id="数组边界检查消除"><a href="#数组边界检查消除" class="headerlink" title="数组边界检查消除"></a>数组边界检查消除</h3><p>如果编译器只要通过数据流分析就可以判定循环变量的取值范围永远在区间[0, foo.length)之内，拿在整个循环中就可以把数组的上下界消除，节约了多次的条件判定操作。</p>
-<p>减少隐式开销的方法除了将这种数组边界检查优化尽可能提前到编译器完成之外，还有一种方法——隐式异常处理，java中空指针检查和算术异常检查都采用这种方法。</p>
-<p>Java伪代码来表示虚拟机访问foo.value的过程示例如下：</p>
+<h3 id="隐式异常处理"><a href="#隐式异常处理" class="headerlink" title="隐式异常处理"></a>隐式异常处理</h3><p>Java伪代码来表示虚拟机访问foo.value的过程示例如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if(foo != null)&#123;</span><br><span class="line">    return foo.value;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    throw new NullPointException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>使用隐式优化后，虚拟机将上面的代码表示的访问过程变成下面的伪代码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">try&#123;</span><br><span class="line">    return foo.value;</span><br><span class="line">&#125;catch(segment_fault)&#123;</span><br><span class="line">    uncommon_trap();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -2000,162 +2160,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/08/Glide和Picasso对比/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dawn">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/08/Glide和Picasso对比/" itemprop="url">Glide和Picasso对比</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-08T21:07:44+08:00">
-                2018-12-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">学习笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Glide和Picasso是目前Android开发中很流行的图片加载库，Glide库和Picasso库也有极大的相似性，其区别主要体现在如下几个方面。</p>
-<h1 id="大小"><a href="#大小" class="headerlink" title="大小"></a>大小</h1><p>Glide库的大小要远远大于Picasso。<br><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Glide%20%E5%92%8C%20Picasso%E5%AF%B9%E6%AF%94_1.png" alt="image"></p>
-<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><ul>
-<li>Glide支持gif</li>
-<li>Glide支持视频略缩图</li>
-<li>Glide支持与Acitivty生命周期联动</li>
-<li>Glide默认加载<strong>RGB_565</strong>(2字节),Picasso默认加载<strong>ARGB8888</strong>(4字节)</li>
-<li>Glide提供了更多配置可供定制化</li>
-</ul>
-<h1 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h1><ul>
-<li><strong>Picasso:</strong> 下载图片然后在本地缓存完整图片。如果需要resize,也是对原图进行resize。</li>
-<li><strong>Glide:</strong> 下载图片,然后改变图片大小以适应不同需求,最后缓存到本地。同一张图片如果不同ImageView加载可能缓存多张图片。</li>
-</ul>
-<h1 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h1><p>由于Glide缓存改变大小后的图片,而Picasso缓存原图,所以Glide使用的内存要小于Picasso。</p>
-<h1 id="速度"><a href="#速度" class="headerlink" title="速度"></a>速度</h1><p>由于缓存机制的不同,Picasso从缓存中读取原图要先resize,而Glide则直接读取缓存图片,所以加载速度Glide优于Picasso。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2206,7 +2210,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
