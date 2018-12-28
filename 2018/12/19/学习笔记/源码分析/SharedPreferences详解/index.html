@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SP的初始化123// app中获取SP对象 // 实际调用的是ContextWrapper的getSharedPreferences()方法SharedPreferences sharedPreferences = getSharedPreferences(&amp;quot;&amp;quot;, Context.MODE_PRIVATE); 12345// ContextWrapper// 这里的mBase">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SharedPreferences详解">
+<meta property="og:url" content="http://yoursite.com/2018/12/19/学习笔记/源码分析/SharedPreferences详解/index.html">
+<meta property="og:site_name" content="Dawn">
+<meta property="og:description" content="SP的初始化123// app中获取SP对象 // 实际调用的是ContextWrapper的getSharedPreferences()方法SharedPreferences sharedPreferences = getSharedPreferences(&amp;quot;&amp;quot;, Context.MODE_PRIVATE); 12345// ContextWrapper// 这里的mBase">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-12-19T15:26:59.321Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SharedPreferences详解">
+<meta name="twitter:description" content="SP的初始化123// app中获取SP对象 // 实际调用的是ContextWrapper的getSharedPreferences()方法SharedPreferences sharedPreferences = getSharedPreferences(&amp;quot;&amp;quot;, Context.MODE_PRIVATE); 12345// ContextWrapper// 这里的mBase">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/19/学习笔记/源码分析/SharedPreferences详解/">
+
+
+
+
+
+  <title>SharedPreferences详解 | Dawn</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dawn</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/19/学习笔记/源码分析/SharedPreferences详解/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dawn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SharedPreferences详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-19T23:26:32+08:00">
+                2018-12-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="SP的初始化"><a href="#SP的初始化" class="headerlink" title="SP的初始化"></a>SP的初始化</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// app中获取SP对象 </span><br><span class="line">// 实际调用的是ContextWrapper的getSharedPreferences()方法</span><br><span class="line">SharedPreferences sharedPreferences = getSharedPreferences(&quot;&quot;, Context.MODE_PRIVATE);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// ContextWrapper</span><br><span class="line">// 这里的mBase是ContextImpl,实际上调用的是ContextImpl的getSharedPreferences()方法</span><br><span class="line">SharedPreferences getSharedPreferences(String name, int mode) &#123;</span><br><span class="line">        return mBase.getSharedPreferences(name, mode);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">// ContextImpl</span><br><span class="line">// 在这里获取SP,首先从缓存中获取,否则实例化新的SharedPreferencesImpl</span><br><span class="line">// 如果Mode设置为支持多线程或者版本小于11则要重新从磁盘更新数据</span><br><span class="line">SharedPreferences getSharedPreferences(File file, int mode) &#123;</span><br><span class="line">        SharedPreferencesImpl sp;</span><br><span class="line">        synchronized (ContextImpl.class) &#123;</span><br><span class="line">            // 获取缓存</span><br><span class="line">            final ArrayMap&lt;File, SharedPreferencesImpl&gt; cache = getSharedPreferencesCacheLocked();</span><br><span class="line">            // 从缓存中获取sp</span><br><span class="line">            sp = cache.get(file);</span><br><span class="line">            if (sp == null) &#123;</span><br><span class="line">                checkMode(mode);</span><br><span class="line">                if (getApplicationInfo().targetSdkVersion &gt;= android.os.Build.VERSION_CODES.O) &#123;</span><br><span class="line">                    if (isCredentialProtectedStorage()</span><br><span class="line">                            &amp;&amp; !getSystemService(UserManager.class)</span><br><span class="line">                                    .isUserUnlockingOrUnlocked(UserHandle.myUserId())) &#123;</span><br><span class="line">                        throw new IllegalStateException(&quot;SharedPreferences in credential encrypted &quot;</span><br><span class="line">                                + &quot;storage are not available until after user is unlocked&quot;);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                // 创建sp实体</span><br><span class="line">                sp = new SharedPreferencesImpl(file, mode);</span><br><span class="line">                cache.put(file, sp);</span><br><span class="line">                return sp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        // 如果当前Mode设置为支持多线程或者版本小于11则要重新从磁盘更新数据</span><br><span class="line">        if ((mode &amp; Context.MODE_MULTI_PROCESS) != 0 ||</span><br><span class="line">            getApplicationInfo().targetSdkVersion &lt; android.os.Build.VERSION_CODES.HONEYCOMB) &#123;</span><br><span class="line">            sp.startReloadIfChangedUnexpectedly();</span><br><span class="line">        &#125;</span><br><span class="line">        return sp;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// SP的构造方法 调用了startLoadFromDisk()加载磁盘中的数据</span><br><span class="line">SharedPreferencesImpl(File file, int mode) &#123;</span><br><span class="line">        mFile = file;</span><br><span class="line">        mBackupFile = makeBackupFile(file);</span><br><span class="line">        mMode = mode;</span><br><span class="line">        mLoaded = false;</span><br><span class="line">        mMap = null;</span><br><span class="line">        mThrowable = null;</span><br><span class="line">        startLoadFromDisk();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 注意这里的锁</span><br><span class="line">// 然后在子线程去读取磁盘数据 其中数据是已XML键值对的形式存储的</span><br><span class="line">// 至此 SP初始化完毕</span><br><span class="line">startLoadFromDisk() &#123;</span><br><span class="line">        synchronized (mLock) &#123;</span><br><span class="line">            // 记住这个变量</span><br><span class="line">            mLoaded = false;</span><br><span class="line">        &#125;</span><br><span class="line">        new Thread(&quot;SharedPreferencesImpl-load&quot;) &#123;</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                loadFromDisk();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.start();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="数据存储"><a href="#数据存储" class="headerlink" title="数据存储"></a>数据存储</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 首先获取Editor</span><br><span class="line">Editor edit() &#123;</span><br><span class="line">        synchronized (mLock) &#123;</span><br><span class="line">            // 等待SP初始化完成</span><br><span class="line">            awaitLoadedLocked();</span><br><span class="line">        &#125;</span><br><span class="line">        return new EditorImpl();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 判断mLoaded的状态,如果当前SP未初始化完成则一直阻塞</span><br><span class="line">void awaitLoadedLocked() &#123;</span><br><span class="line">        if (!mLoaded) &#123;</span><br><span class="line">            BlockGuard.getThreadPolicy().onReadFromDisk();</span><br><span class="line">        &#125;</span><br><span class="line">        // 阻塞当前线程以等待SP的初始化</span><br><span class="line">        // startLoadFromDisk()方法中设为false 直到SP初始化完成为true</span><br><span class="line">        while (!mLoaded) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                mLock.wait();</span><br><span class="line">            &#125; catch (InterruptedException unused) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (mThrowable != null) &#123;</span><br><span class="line">            throw new IllegalStateException(mThrowable);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 以putString为例,对象都暂存在一个Map中</span><br><span class="line">Editor putString(String key, @Nullable String value) &#123;</span><br><span class="line">            synchronized (mEditorLock) &#123;</span><br><span class="line">                mModified.put(key, value);</span><br><span class="line">                return this;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 在当前线程将文件改动写入磁盘 容易造成线程阻塞 慎用</span><br><span class="line">boolean commit() &#123;</span><br><span class="line">            MemoryCommitResult mcr = commitToMemory();</span><br><span class="line">            SharedPreferencesImpl.this.enqueueDiskWrite(</span><br><span class="line">                mcr, null /* sync write on this thread okay */);</span><br><span class="line">            try &#123;</span><br><span class="line">                mcr.writtenToDiskLatch.await();</span><br><span class="line">            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line">            notifyListeners(mcr);</span><br><span class="line">            return mcr.writeToDiskResult;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 通过apply()方法提交更改 新建线程将文件改动写入磁盘</span><br><span class="line">void apply() &#123;</span><br><span class="line">            final MemoryCommitResult mcr = commitToMemory();</span><br><span class="line">            final Runnable awaitCommit = new Runnable() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public void run() &#123;</span><br><span class="line">                        try &#123;</span><br><span class="line">                            mcr.writtenToDiskLatch.await();</span><br><span class="line">                        &#125; catch (InterruptedException ignored) &#123;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;;</span><br><span class="line">            QueuedWork.addFinisher(awaitCommit);</span><br><span class="line">            Runnable postWriteRunnable = new Runnable() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public void run() &#123;</span><br><span class="line">                        awaitCommit.run();</span><br><span class="line">                        QueuedWork.removeFinisher(awaitCommit);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;;</span><br><span class="line">            SharedPreferencesImpl.this.enqueueDiskWrite(mcr, postWriteRunnable);</span><br><span class="line">            notifyListeners(mcr);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// 然而值得注意的是在ActivityThread的handlePauseActivity()方法中,有如下逻辑</span><br><span class="line">// 在ActivityThread的handleStopActivity(),handleSleeping(),handleServiceArgs(),handleStopService()方法中也有类似逻辑</span><br><span class="line">void handlePauseActivity(IBinder token, boolean finished, boolean userLeaving,</span><br><span class="line">            int configChanges, PendingTransactionActions pendingActions, String reason) &#123;</span><br><span class="line">        if (r != null) &#123;</span><br><span class="line">            if (r.isPreHoneycomb()) &#123;</span><br><span class="line">                // 等待QueuedWork中的任务执行完毕</span><br><span class="line">                // 这里面是一个单线程的线程池 如果任务过多可能造成阻塞</span><br><span class="line">                QueuedWork.waitToFinish();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="数据获取"><a href="#数据获取" class="headerlink" title="数据获取"></a>数据获取</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 以获取String对象为例</span><br><span class="line">String getString(String key, @Nullable String defValue) &#123;</span><br><span class="line">        synchronized (mLock) &#123;</span><br><span class="line">            // 等待SP初始化完成</span><br><span class="line">            awaitLoadedLocked();</span><br><span class="line">            String v = (String)mMap.get(key);</span><br><span class="line">            return v != null ? v : defValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 判断mLoaded的状态,如果当前SP未初始化完成则一直阻塞</span><br><span class="line">void awaitLoadedLocked() &#123;</span><br><span class="line">        if (!mLoaded) &#123;</span><br><span class="line">            BlockGuard.getThreadPolicy().onReadFromDisk();</span><br><span class="line">        &#125;</span><br><span class="line">        // 阻塞当前线程以等待SP的初始化</span><br><span class="line">        // startLoadFromDisk()方法中设为false 直到SP初始化完成为true</span><br><span class="line">        while (!mLoaded) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                mLock.wait();</span><br><span class="line">            &#125; catch (InterruptedException unused) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (mThrowable != null) &#123;</span><br><span class="line">            throw new IllegalStateException(mThrowable);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li><strong>SP内部使用XML文件实现,推荐存放小数据</strong></li>
+<li><strong>commit()方法不会新建线程提交改动,不推荐使用</strong></li>
+<li><strong>apply()方法虽然会新建线程提交改动,但是提交过多仍然容易造成阻塞</strong></li>
+<li><strong>在SP未初始化完成之前使用可能造成线程阻塞</strong></li>
+<li><strong>SP实现跨进程通信不靠谱</strong></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/18/读书笔记/深入理解Java虚拟机/深入理解Java类加载/" rel="next" title="深入理解Java类加载">
+                <i class="fa fa-chevron-left"></i> 深入理解Java类加载
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/20/学习笔记/源码分析/Handler消息机制源码详解/" rel="prev" title="Handler消息机制源码详解">
+                Handler消息机制源码详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDY4OC8xMTIyNQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Dawn</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/delaube" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="lu923418335@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SP的初始化"><span class="nav-number">1.</span> <span class="nav-text">SP的初始化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据存储"><span class="nav-number">2.</span> <span class="nav-text">数据存储</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据获取"><span class="nav-number">3.</span> <span class="nav-text">数据获取</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dawn</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

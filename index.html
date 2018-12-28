@@ -249,7 +249,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/20/Handler消息机制源码详解/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/20/学习笔记/源码分析/Handler消息机制源码详解/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -268,7 +268,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/20/Handler消息机制源码详解/" itemprop="url">Handler消息机制源码详解</a></h1>
+                <a class="post-title-link" href="/2018/12/20/学习笔记/源码分析/Handler消息机制源码详解/" itemprop="url">Handler消息机制源码详解</a></h1>
         
 
         <div class="post-meta">
@@ -361,7 +361,7 @@
 <h1 id="Loop"><a href="#Loop" class="headerlink" title="Loop"></a>Loop</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 通过ThreadLocal将Loop与Thread建立联系</span><br><span class="line">void prepare(boolean quitAllowed) &#123;</span><br><span class="line">        if (sThreadLocal.get() != null) &#123;</span><br><span class="line">            throw new RuntimeException(&quot;Only one Looper may be created per thread&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        sThreadLocal.set(new Looper(quitAllowed));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// UI线程的prepare()方法</span><br><span class="line">void prepareMainLooper() &#123;</span><br><span class="line">        prepare(false);</span><br><span class="line">        synchronized (Looper.class) &#123;</span><br><span class="line">            if (sMainLooper != null) &#123;</span><br><span class="line">                throw new IllegalStateException(&quot;The main Looper has already been prepared.&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            sMainLooper = myLooper();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 无限循环 获得Message并且处理</span><br><span class="line">void loop() &#123;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            // next()方法使用了epoll 不会造成资源浪费</span><br><span class="line">            Message msg = queue.next(); </span><br><span class="line">            if (msg == null) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">            // target就是Message绑定的Handler 最后转到Handler进行事件的处理</span><br><span class="line">            msg.target.dispatchMessage(msg);</span><br><span class="line">            msg.recycleUnchecked();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
 <li><strong>Handler:</strong> 负责发送和处理消息</li>
 <li><strong>Message:</strong> 负责存储消息信息</li>
 <li><strong>MessageQueue:</strong> 负责消息队列的管理</li>
@@ -415,7 +415,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/19/SharedPreferences详解/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/19/学习笔记/源码分析/SharedPreferences详解/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -434,7 +434,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/19/SharedPreferences详解/" itemprop="url">SharedPreferences详解</a></h1>
+                <a class="post-title-link" href="/2018/12/19/学习笔记/源码分析/SharedPreferences详解/" itemprop="url">SharedPreferences详解</a></h1>
         
 
         <div class="post-meta">
@@ -576,7 +576,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/深入理解Java类加载/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/读书笔记/深入理解Java虚拟机/深入理解Java类加载/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -595,7 +595,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/18/深入理解Java类加载/" itemprop="url">深入理解Java类加载</a></h1>
+                <a class="post-title-link" href="/2018/12/18/读书笔记/深入理解Java虚拟机/深入理解Java类加载/" itemprop="url">深入理解Java类加载</a></h1>
         
 
         <div class="post-meta">
@@ -744,7 +744,7 @@
 <li>应用程序类加载器(Application ClassLoader)</li>
 </ol>
 <p>这些加载器的关系如下所示：</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E7%B1%BB%E5%8A%A0%E8%BD%BD_1.png" alt=""></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/5adbf062235240ddd2f6.png" alt=""></p>
 <p>双亲委派模型的工作过程是：当一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委托给父类加载器去完成，每一个层次的类加载器都是如此。</p>
 <p>使用双亲委派模型的好处就是java类随着他的类加载器一起具备了一种带有优先级的层次关系。</p>
 
@@ -795,7 +795,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/高效并发之Java内存模型与线程/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/读书笔记/深入理解Java虚拟机/高效并发之Java内存模型与线程/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -814,7 +814,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/18/高效并发之Java内存模型与线程/" itemprop="url">高效并发之Java内存模型与线程</a></h1>
+                <a class="post-title-link" href="/2018/12/18/读书笔记/深入理解Java虚拟机/高效并发之Java内存模型与线程/" itemprop="url">高效并发之Java内存模型与线程</a></h1>
         
 
         <div class="post-meta">
@@ -891,12 +891,12 @@
             <h1 id="Java内存模型和线程"><a href="#Java内存模型和线程" class="headerlink" title="Java内存模型和线程"></a>Java内存模型和线程</h1><h2 id="硬件的效率与一致性"><a href="#硬件的效率与一致性" class="headerlink" title="硬件的效率与一致性"></a>硬件的效率与一致性</h2><p>由于处理器和主存速度差异巨大，所以产生了高速缓存作为两者其中的缓冲。</p>
 <p>高速缓存的出现解决了速度不匹配的问题，不过也带来了新的问题：缓存一致性。在多处理器系统中每个处理器都有自己的高速缓存，而他们却共享同一主存。运算时可能导致不同处理器缓存数据不一致，那同步回主存的缓存数据以谁为准呢？</p>
 <p>为了解决缓存一致性问题，每个处理器访问缓存都遵循一些协议。</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_1.jpg" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/06636a4414047015cc49.jpg" alt="image"></p>
 <p>为了充分利用处理器内部的运算单元尽量被利用，处理器可能会对输入代码进行乱序执行优化。</p>
 <h2 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a>Java内存模型</h2><p>Java虚拟机试图定义一种Java内存模型来屏蔽掉各种硬件和操作系统的内存访问差异。</p>
 <h3 id="主内存和工作内存"><a href="#主内存和工作内存" class="headerlink" title="主内存和工作内存"></a>主内存和工作内存</h3><p>Java内存模型规定了所有变量都存储在主内存，每条线程还有自己的工作内存，线程的工作内存中保存了被该线程使用到的变量的主内存副本拷贝。</p>
 <p>线程对变量的所有操作（读取，赋值等）操作都必须在工作内存中进行，而不能直接读写主内存的变量，线程间变量值的传递均需要通过主内存来完成，线程，主内存，工作内存三者的交互关系如图所示：</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_2.jpg" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/1ec894e726cf6128342b.jpg" alt="image"></p>
 <p>此处的变量包括实例字段，静态字段和构成数组对象的元素，但不包括局部变量和方法参数，因为后者是线程私有的。</p>
 <h3 id="内存间交互操作"><a href="#内存间交互操作" class="headerlink" title="内存间交互操作"></a>内存间交互操作</h3><p>Java内存模型中定义了以下8中操作完成一个变量如何从主内存拷贝到工作内存，如何从工作内存同步回主内存之类的实现细节。</p>
 <ol>
@@ -927,7 +927,7 @@
 <li>禁止指令重排序优化</li>
 </ol>
 <p>假设T表示一个线程，V和W分别代表两个volatile变量，那么有如下规则：</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_3.jpg" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/c8c1292790471802a254.jpg" alt="image"></p>
 <h3 id="long和double型变量的特殊规则"><a href="#long和double型变量的特殊规则" class="headerlink" title="long和double型变量的特殊规则"></a>long和double型变量的特殊规则</h3><p>Java内存模型要求8个基本操作具有原子性。</p>
 <p>但对于64位数据（long和double），模型中定义了一条相对宽松的规定：允许虚拟机将没有volatile修饰的64位数据的读写操作划分为两次32位操作。</p>
 <p>这就是long和double的非原子性协定。</p>
@@ -937,12 +937,12 @@
 <p>有序性：如果在本线程内观察，所有的操作都是有序的，如果在一个线程观察另一个线程，所有的操作都是无序的。前半句指的是线程内表现为串行执行，后半句指的是指令重排序现象和工作内存与主内存同步延迟。能实现有序性的有volatile和synchronized，synchronized是通过一个变量在同一时刻只允许一条线程对其进行lock操作这条规则获得的。</p>
 <h3 id="先行发生原则"><a href="#先行发生原则" class="headerlink" title="先行发生原则"></a>先行发生原则</h3><p>先行发生原则事发生在Java内存模型中定义的两项操作中的偏序关系，如果操作A现行发生于操作B，操作A产生的影响就能被操作B观察到。</p>
 <p>下面是Java内存模型下一些天然的先行发生关系：</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_4.jpg" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/03fbb78aede73fb39b3e.jpg" alt="image"></p>
 <h1 id="Java与线程"><a href="#Java与线程" class="headerlink" title="Java与线程"></a>Java与线程</h1><h2 id="线程的实现"><a href="#线程的实现" class="headerlink" title="线程的实现"></a>线程的实现</h2><p>线程可以共享进程资源，又可以独立调度（线程是CPU调度的基本单位）。</p>
 <p>线程的实现主要有三种方式：使用内核实现，使用用户线程实现，使用用户线程加轻量级进程混合实现。</p>
 <h3 id="使用内核线程实现"><a href="#使用内核线程实现" class="headerlink" title="使用内核线程实现"></a>使用内核线程实现</h3><p>这种线程由内核来完成线程切换，每个内核线程可视为内核的一个分身，这样操作系统就可以同时处理多件事情，支持多线程的内核就叫做多线程内核。</p>
 <p>程序一般不直接使用内核线程而使用轻量级进程（LWP就是线程）。轻量级进程与内核线程之间1:1的关系称为一对一的线程模型。</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_5.jpg" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/bab18414f93f208c514d.jpg" alt="image"></p>
 <ul>
 <li><p>优点：即便有一个轻量级进程阻塞了也不影响整个进程执行</p>
 </li>
@@ -952,7 +952,7 @@
 <h3 id="使用用户线程实现"><a href="#使用用户线程实现" class="headerlink" title="使用用户线程实现"></a>使用用户线程实现</h3><p>广义上来讲，一个线程只要不是内核线程就可以被认为是用户线程（UT）。</p>
 <p>狭义上来讲，用户线程是完全建立在用户空间的线程库上，系统内核不能感知线程存在的实现。用户线程的各种操作建立在用户的线程库上，如果程序得当，这种线程不需要切换到内核态。</p>
 <p>部分高性能数据库中的多线程就是使用用户线程实现的，这种进程与用户县城之间1：N的关系称为一对多的线程模型。</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_6.jpg" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/09bb4368ad7c9e9fa611.jpg" alt="image"></p>
 <ul>
 <li><p>优点：不需要系统内核支援</p>
 </li>
@@ -962,7 +962,7 @@
 <h3 id="使用用户线程加轻量级进程混合实现"><a href="#使用用户线程加轻量级进程混合实现" class="headerlink" title="使用用户线程加轻量级进程混合实现"></a>使用用户线程加轻量级进程混合实现</h3><p>这种实现方式下，即存在用户线程，也存在轻量级进程。 </p>
 <p>用户线程的各项操作依然廉价，而且可以使用内核提供的线程调度更能以及处理器映射。</p>
 <p>这种模式中，用户线程与轻量级进程的数量比是不定的，为N:M的关系。</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_7.jpg" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/d6e7d9023431e11a4aee.jpg" alt="image"></p>
 <h3 id="Java线程的实现"><a href="#Java线程的实现" class="headerlink" title="Java线程的实现"></a>Java线程的实现</h3><p>在目前的JDK版本中，操作系统支持什么怎样的线程模型，很大程度上了决定了Java虚拟机中的线程是怎样映射的。</p>
 <h2 id="Java线程调度"><a href="#Java线程调度" class="headerlink" title="Java线程调度"></a>Java线程调度</h2><p>线程调度指的是系统为线程分配处理器使用权的过程，主要调度分两种，分别是协同式线程调度和抢占式线程调度。</p>
 <p>协同式调度：线程的执行时间由线程自己决定，一个线程将自己的工作执行完毕后会主动通知系统切换到另外一个线程上。</p>
@@ -990,7 +990,7 @@
 <li>结束：已终止线程的线程状态，线程已经结束执行</li>
 </ol>
 <p>上述各种状态的相互转换如下图所示：</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B_8.jpg" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/09068a100c39c21c695c.jpg" alt="image"></p>
 
           
         
@@ -1039,7 +1039,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/高效并发之Java线程安全与锁优化/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/读书笔记/深入理解Java虚拟机/高效并发之Java线程安全与锁优化/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -1058,7 +1058,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/18/高效并发之Java线程安全与锁优化/" itemprop="url">高效并发之Java线程安全与锁优化</a></h1>
+                <a class="post-title-link" href="/2018/12/18/读书笔记/深入理解Java虚拟机/高效并发之Java线程安全与锁优化/" itemprop="url">高效并发之Java线程安全与锁优化</a></h1>
         
 
         <div class="post-meta">
@@ -1155,7 +1155,7 @@
 <p>如果虚拟机检测到这种情况，会将加锁同步的范围扩展（粗化）到整个操作序列的外部。</p>
 <h2 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h2><p>HotSpot虚拟机的对象头分为两部分信息，第一部分用于存储对象自身的运行时数据，如哈希码，GC分带年龄等，这部分数据是实现轻量级锁和偏向锁的关键，官方称他们为Mark Word。另一部分用于存储指向方法区对象类型数据的指针。</p>
 <p>Mark Word会根据对象的状态复用自己的存储空间，存储内容如下所示：</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E9%AB%98%E6%95%88%E5%B9%B6%E5%8F%91%E4%B9%8BJava%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E4%B8%8E%E9%94%81%E4%BC%98%E5%8C%96_1.png" alt=""></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/0126662604f89a4981f0.png" alt=""></p>
 <p>在代码进入同步块的时候，如果同步对象没有被锁定（锁标志位为01状态），虚拟机将会首先在当前线程的栈帧中建立一个名为锁记录的空间，用于存储锁对象目前的Mark Word的拷贝.</p>
 <p>然后，虚拟机将使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针。</p>
 <p>如果成功，那么这个线程就拥有了这个对象的锁，并且对象的Mark Word的锁标志位将转变为00，标示此对象处于轻量级锁定状态。</p>
@@ -1214,7 +1214,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/Java自动内存管理机制/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/读书笔记/深入理解Java虚拟机/Java自动内存管理机制/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -1233,7 +1233,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/18/Java自动内存管理机制/" itemprop="url">Java自动内存管理机制</a></h1>
+                <a class="post-title-link" href="/2018/12/18/读书笔记/深入理解Java虚拟机/Java自动内存管理机制/" itemprop="url">Java自动内存管理机制</a></h1>
         
 
         <div class="post-meta">
@@ -1341,9 +1341,9 @@
 <p>对齐填充只是要求对象的大小是8字节的整数倍，当对象实例数据没有对齐时，需要对齐填充来补全。</p>
 <h3 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h3><p>目前主流的对象访问方式有使用句柄和直接指针两种。</p>
 <ul>
-<li><p>如果使用句柄，那么在堆中会划分出一块内存作为句柄池，reference中存储的就是对象的句柄地址，而句柄中包含了对象实例数据与类型数据各自的具体地址信息。<br><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_1.png" alt=""></p>
+<li><p>如果使用句柄，那么在堆中会划分出一块内存作为句柄池，reference中存储的就是对象的句柄地址，而句柄中包含了对象实例数据与类型数据各自的具体地址信息。<br><img src="http://lc-tofql8gr.cn-n1.lcfile.com/14bfce5365d1e440152c.png" alt=""></p>
 </li>
-<li><p>如果使用直接指针访问，那么堆对象的布局就要考虑如何放置访问类型数据的相关信息，而reference中存储的直接就是对象地址。<br><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_2.png" alt=""></p>
+<li><p>如果使用直接指针访问，那么堆对象的布局就要考虑如何放置访问类型数据的相关信息，而reference中存储的直接就是对象地址。<br><img src="http://lc-tofql8gr.cn-n1.lcfile.com/5576bf5d985de03817c6.png" alt=""></p>
 </li>
 </ul>
 <p>使用句柄好处是拥有稳定的句柄地址，在对象被移动时只改变句柄中的实例数据指针，而reference本身不需要修改。</p>
@@ -1377,7 +1377,7 @@
 </li>
 </ol>
 <h2 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h2><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p>算法先标记所有需要回收的对象，在标记完成后统一回收所有被标记的对象。</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_3.png" alt=""><br>缺点：</p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/3ca5bbb0fed0321b8771.png" alt=""><br>缺点：</p>
 <ul>
 <li><p>标记和清除两个过程效率都不高</p>
 </li>
@@ -1385,13 +1385,13 @@
 </li>
 </ul>
 <h3 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h3><p>将内存按照容量划分为大小相等的两块，每次只使用其中的一块。当这一块用光了，那就将还存活着的对象复制到另外一块上面，然后将已经使用过的内存空间一次清理掉。</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_4.png" alt=""></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/6bcbd6dcff7dcb076df7.png" alt=""></p>
 <p>缺点：使可用内存减少</p>
 <p>现在商业虚拟机使用这种方法回收新生代，将内存分为较大的Eden和两块较小的Survivor空间，每次使用Eden和其中一块Surivor。</p>
 <p>回收时将Eden和Survivor中还存活的对象一次性的复制到另一块Survivor空间上，然后清理掉Eden和刚才使用过的Survivor空间。默认Eden和Survivor的大小比例是8：1。</p>
 <p>如果当Surivivor空间不够用时，需要依赖其他内存（老年代）进行分配担保。</p>
 <h3 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h3><p>过程与标记-清除算法一样，但是后续步骤将所有存活对象向一端移动，然后直接清理掉边界以外的内存。</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_Java%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6_5.png" alt=""></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/79a55b5b17e307152f75.png" alt=""></p>
 <h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>根据对象存货周期的不同将内存分为几块，通常将堆分为新生代和老年代。</p>
 <p>新生代每次垃圾收集都有大批对象死去，所以采用复制算法，老年代对象存活率高，所以采用标记-清除或者标记-整理算法。</p>
 <h2 id="HotSpot算法实现"><a href="#HotSpot算法实现" class="headerlink" title="HotSpot算法实现"></a>HotSpot算法实现</h2><h3 id="枚举根节点"><a href="#枚举根节点" class="headerlink" title="枚举根节点"></a>枚举根节点</h3><p>GC Roots的节点主要体现在全局性的引用和执行上下文中，如果要执行检查其中的引用必然要耗费大量时间，而且枚举根节点必然要发生GC停顿。</p>
@@ -1452,7 +1452,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/程序编译与代码优化之运行期/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/读书笔记/深入理解Java虚拟机/程序编译与代码优化之运行期/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -1471,7 +1471,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/18/程序编译与代码优化之运行期/" itemprop="url">程序编译与代码优化之运行期</a></h1>
+                <a class="post-title-link" href="/2018/12/18/读书笔记/深入理解Java虚拟机/程序编译与代码优化之运行期/" itemprop="url">程序编译与代码优化之运行期</a></h1>
         
 
         <div class="post-meta">
@@ -1561,10 +1561,10 @@
 </ol>
 <p>在HotSpot虚拟机中采用了第二种方法，为每个方法准备了两类计数器：方法调用计数器和回边计数器。</p>
 <p>方法调用计数器其交互过程如下所示：</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E4%B8%8E%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%9C%9F_1.png" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/f74ffbf34a8de34172e6.png" alt="image"></p>
 <p>方法调用计数器统计的是一段时间内方法的执行频率。当超过一定时间限度此方法调用次数仍不足以让它提交给即时编译器编译，那么他的调用计数器就会较少一半。</p>
 <p>回边计数器作用是统计一个方法中循环体代码执行的次数，在字节码中遇到控制流向后跳转的指令成为回边。回边计数器的交互过程如下所示：</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E4%B8%8E%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%9C%9F_2.png" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/1fe8eafaa8fca59f8eac.png" alt="image"></p>
 <p>回边计数器统计的是方法循环执行的绝对次数，没有计数热度衰减的过程。</p>
 <h3 id="编译过程"><a href="#编译过程" class="headerlink" title="编译过程"></a>编译过程</h3><p>后台编译分三个阶段：</p>
 <ol>
@@ -1651,7 +1651,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/程序编译与代码优化之编译期/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/读书笔记/深入理解Java虚拟机/程序编译与代码优化之编译期/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -1670,7 +1670,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/18/程序编译与代码优化之编译期/" itemprop="url">程序编译与代码优化之编译期</a></h1>
+                <a class="post-title-link" href="/2018/12/18/读书笔记/深入理解Java虚拟机/程序编译与代码优化之编译期/" itemprop="url">程序编译与代码优化之编译期</a></h1>
         
 
         <div class="post-meta">
@@ -1812,7 +1812,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/14/访问网站流程/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/14/学习笔记/计算机网络/访问网站流程/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -1831,7 +1831,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/14/访问网站流程/" itemprop="url">访问网站流程</a></h1>
+                <a class="post-title-link" href="/2018/12/14/学习笔记/计算机网络/访问网站流程/" itemprop="url">访问网站流程</a></h1>
         
 
         <div class="post-meta">
@@ -1916,7 +1916,7 @@
 <h2 id="Http数据包"><a href="#Http数据包" class="headerlink" title="Http数据包"></a>Http数据包</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 生成http数据包</span><br><span class="line">GET http://www.baidu.com/ HTTP/1.1</span><br><span class="line">Accept: application/x-ms-application, image/jpeg, application/xaml+xml, image/gif, image/pjpeg, application/x-ms-xbap, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*</span><br><span class="line">Accept-Language: en-US</span><br><span class="line">User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E; Zune 4.7; InfoPath.3; MS-RTC LM 8)</span><br><span class="line">Accept-Encoding: gzip, deflate, peerdist</span><br><span class="line">Proxy-Connection: Keep-Alive</span><br><span class="line">Host: www.baidu.com</span><br><span class="line">Cookie: BDSFRCVID=H1K_JgC2l434o0a3SlYrhIyDwFLxPM7C3J; H_BDCLCKID_SF=tJAt_C8htDv5HTuRj63D5JcH-UnLqMkDWaOZ0h8-aI-5MbAx-jb6hhFXM-r80nblBTbT2C3nthF0HPonHj8Bej5L3J; BAIDUID=C0E879D1A40237E70E9FA559D40EE0AC:FG=1; BDUT=w5n3C0E879D1A40237E70E9FA559D40EE0AC13914a661370; BDUSS=FEQVdNdjllMTYyYlRxY3ZZbW1hM2htemdqZFVJcWRLWmFBaEtqd1FoTDNXeE5SQUFBQUFBJCQAAAAAAAAAAAoqyysAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADEwLjI2LjE5Ny43NwAAAADAxFInAAAAAPcNJlD3DSZQYV; BDRCVFR[eYjbPwSqvSs]=2g3v5sBI-NCpv4EILPoXi4WUvY; Hm_lvt_9f14aaa038bbba8b12ec2a4a3e51d254=1344671219756; Hm_lpvt_9f14aaa038bbba8b12ec2a4a3e51d254=1344671219756</span><br><span class="line">X-P2P-PeerDist: Version=1.0</span><br></pre></td></tr></table></figure>
 <h1 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h1><p>TCP 数据包需要设置端口，接收方的Http端口默认是 80,本机的端口是一个1024-65535之间的随机整数。</p>
 <p>首先通过TCP三次握手建立连接,通过TCP四次挥手断开连接。</p>
-<p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_%E8%AE%BF%E9%97%AE%E7%BD%91%E7%AB%99%E5%85%A8%E6%B5%81%E7%A8%8B_1.png" alt="image"></p>
+<p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/c890758b5ee6ea073c79.png" alt="image"></p>
 <h2 id="TCP三次握手-建立连接"><a href="#TCP三次握手-建立连接" class="headerlink" title="TCP三次握手(建立连接)"></a>TCP三次握手(建立连接)</h2><ol>
 <li><strong>第一次握手:</strong> 客户端发送SYN(syn=x)包到服务器,并进入SYN_SEND状态,等待服务器确认</li>
 <li><strong>第二次握手:</strong> 服务器接收到syn包,必须确认客户的SYN(ack=x+1),同时自己也发送一个SYN包(syn=y),即SYN+ACK包,此时服务器进入SYN_RECV状态</li>
@@ -1993,7 +1993,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/13/OkHttp源码详解/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/13/学习笔记/源码分析/OkHttp源码详解/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Dawn">
@@ -2012,7 +2012,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/13/OkHttp源码详解/" itemprop="url">OkHttp源码详解</a></h1>
+                <a class="post-title-link" href="/2018/12/13/学习笔记/源码分析/OkHttp源码详解/" itemprop="url">OkHttp源码详解</a></h1>
         
 
         <div class="post-meta">
@@ -2087,7 +2087,7 @@
         
           
             <p><strong>本文基于OkHttp 3.12.0版本</strong></p>
-<h1 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h1><p><img src="http://pj8vo9ptw.bkt.clouddn.com/img_OkHttp%E6%BA%90%E7%A0%81%E8%AF%A6%E8%A7%A3_1.png" alt="image"></p>
+<h1 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h1><p><img src="http://lc-tofql8gr.cn-n1.lcfile.com/7019b2f04df85bb88fe6.png" alt="image"></p>
 <h1 id="深入源码"><a href="#深入源码" class="headerlink" title="深入源码"></a>深入源码</h1><h2 id="创建OkHttpClient"><a href="#创建OkHttpClient" class="headerlink" title="创建OkHttpClient"></a>创建OkHttpClient</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 使用Builder模式创建OkHttpClient</span><br><span class="line">public OkHttpClient() &#123;</span><br><span class="line">    this(new OkHttpClient.Builder());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">// OkHttpClient中的一些参数</span><br><span class="line">public Builder() &#123;</span><br><span class="line">    // 分发器</span><br><span class="line">    this.dispatcher = new Dispatcher();</span><br><span class="line">    // 协议</span><br><span class="line">    this.protocols = OkHttpClient.DEFAULT_PROTOCOLS;</span><br><span class="line">    // 传输层版本与连接协议</span><br><span class="line">    this.connectionSpecs = OkHttpClient.DEFAULT_CONNECTION_SPECS;</span><br><span class="line">    this.eventListenerFactory = EventListener.factory(EventListener.NONE);</span><br><span class="line">    // 代理选择</span><br><span class="line">    this.proxySelector = ProxySelector.getDefault();</span><br><span class="line">    if (this.proxySelector == null) &#123;</span><br><span class="line">        this.proxySelector = new NullProxySelector();</span><br><span class="line">    &#125;</span><br><span class="line">    // cookie</span><br><span class="line">    this.cookieJar = CookieJar.NO_COOKIES;</span><br><span class="line">    // socket工厂</span><br><span class="line">    this.socketFactory = SocketFactory.getDefault();</span><br><span class="line">    // 主机名字确认</span><br><span class="line">    this.hostnameVerifier = OkHostnameVerifier.INSTANCE;</span><br><span class="line">    // 证书链</span><br><span class="line">    this.certificatePinner = CertificatePinner.DEFAULT;</span><br><span class="line">    // 代理身份验证</span><br><span class="line">    this.proxyAuthenticator = Authenticator.NONE;</span><br><span class="line">    // 本地身份验证</span><br><span class="line">    this.authenticator = Authenticator.NONE;</span><br><span class="line">    // 连接池</span><br><span class="line">    this.connectionPool = new ConnectionPool();</span><br><span class="line">    // 域名</span><br><span class="line">    this.dns = Dns.SYSTEM;</span><br><span class="line">    // 安全套接层重定向</span><br><span class="line">    this.followSslRedirects = true;</span><br><span class="line">    // 本地重定向</span><br><span class="line">    this.followRedirects = true;</span><br><span class="line">    // 尝试连接失败</span><br><span class="line">    this.retryOnConnectionFailure = true;</span><br><span class="line">    this.callTimeout = 0;</span><br><span class="line">    // 默认连接超时时间</span><br><span class="line">    this.connectTimeout = 10000;</span><br><span class="line">    // 默认读取超时时间</span><br><span class="line">    this.readTimeout = 10000;</span><br><span class="line">    // 默认写入超时时间</span><br><span class="line">    this.writeTimeout = 10000;</span><br><span class="line">    this.pingInterval = 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="发起同步请求"><a href="#发起同步请求" class="headerlink" title="发起同步请求"></a>发起同步请求</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 发起一个同步的网络请求</span><br><span class="line">okHttpClient.newCall(request).execute();</span><br></pre></td></tr></table></figure>
